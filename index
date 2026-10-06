@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife Gym - Registro & Gamificación de Máquinas</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
+            accent: {
+              500: '#10b981',
+              600: '#059669',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #020617;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .badge-glow {
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.25);
+    }
+
+    #app-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #main-header {
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    #main-content {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      flex: 1;
+      min-height: calc(100vh - 72px);
+    }
+
+    .full-width-section {
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      #main-content {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #main-content {
+        padding-bottom: 90px;
+      }
+    }
+  </style>
+</head>
+
+<body class="font-sans bg-slate-950 text-slate-100 antialiased">
+
+<div id="app-wrapper">
+
+  <!-- ==================== HEADER ==================== -->
+  <header
+    id="main-header"
+    class="sticky top-0 z-30 glass-panel border-b border-slate-800 px-4 py-3"
+  >
+    <div class="w-full flex items-center justify-between gap-4">
+
+      <!-- Logo -->
+      <div
+        class="flex items-center gap-3 cursor-pointer"
+        onclick="app.navigateTo('catalog')"
+      >
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-brand-500/20"
+        >
+          <i class="fa-solid fa-dumbbell"></i>
+        </div>
+
+        <div>
+          <h1 class="font-black text-lg tracking-wider text-white">
+            FITLIFE
+            <span class="text-brand-500">GYM</span>
+          </h1>
+
+          <p class="text-xs text-slate-400 font-medium hidden sm:block">
+            Registro & Gamificación
+          </p>
+        </div>
+      </div>
+
+      <!-- Usuario -->
+      <div
+        id="header-user-widget"
+        class="hidden items-center gap-3 sm:gap-4"
+      >
+
+        <!-- Puntos -->
+        <div
+          onclick="app.navigateTo('gamification')"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/90 border border-brand-500/30 hover:border-brand-500 transition-all cursor-pointer"
+        >
+          <div
+            class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold"
+          >
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+
+          <span
+            id="header-user-points"
+            class="font-bold text-amber-400 text-sm"
+          >
+            350
+          </span>
+
+          <span class="text-xs text-slate-400 font-medium">
+            Pts
+          </span>
+        </div>
+
+        <!-- Rol -->
+        <button
+          id="role-toggle-btn"
+          onclick="app.toggleRole()"
+          title="Cambiar Rol"
+          class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5"
+        >
+          <span id="role-badge-text" class="text-brand-400">
+            Miembro
+          </span>
+
+          <i class="fa-solid fa-arrows-rotate text-slate-400 text-[10px]"></i>
+        </button>
+
+        <!-- Avatar -->
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
+
+          <div
+            class="w-8 h-8 rounded-full bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs ring-2 ring-brand-500/50"
+          >
+            <span id="header-user-initials">JP</span>
+          </div>
+
+          <button
+            onclick="app.logout()"
+            title="Cerrar Sesión"
+            class="text-slate-400 hover:text-red-400 text-sm p-1.5 transition-colors"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+
+        </div>
+
+        <!-- Pantalla completa -->
+        <button
+          onclick="app.toggleFullscreen()"
+          title="Pantalla completa"
+          class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-brand-500 transition-colors"
+        >
+          <i class="fa-solid fa-expand"></i>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ==================== CONTENIDO PRINCIPAL ==================== -->
+  <main
+    id="main-content"
+    class="flex-1 w-full p-4 sm:p-6 pb-24 sm:pb-8"
+  >
+
+    <!-- ==================== LOGIN ==================== -->
+    <section
+      id="view-login"
+      class="max-w-md mx-auto pt-4 sm:pt-10"
+    >
+
+      <div
+        class="glass-panel rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-800 relative overflow-hidden"
+      >
+
+        <div
+          class="absolute -top-12 -right-12 w-40 h-40 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"
+        ></div>
+
+        <div class="text-center mb-6">
+
+          <div
+            class="inline-flex p-3 rounded-2xl bg-brand-500/10 text-brand-500 mb-3"
+          >
+            <i class="fa-solid fa-id-card-clip text-3xl"></i>
+          </div>
+
+          <h2 class="text-2xl font-bold text-white">
+            ¡Bienvenido a FitLife!
+          </h2>
+
+          <p class="text-sm text-slate-400 mt-1">
+            Registra fallas en máquinas, acumula puntos y gana recompensas.
+          </p>
+
+        </div>
+
+        <!-- Tabs -->
+        <div
+          class="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl mb-6 border border-slate-800"
+        >
+
+          <button
+            id="tab-login-btn"
+            onclick="app.switchAuthTab('login')"
+            class="py-2.5 text-sm font-semibold rounded-lg bg-brand-500 text-white shadow-md"
+          >
+            Iniciar Sesión
+          </button>
+
+          <button
+            id="tab-register-btn"
+            onclick="app.switchAuthTab('register')"
+            class="py-2.5 text-sm font-semibold rounded-lg text-slate-400 hover:text-white"
+          >
+            Registrarse
+          </button>
+
+        </div>
+
+        <!-- Banner -->
+        <div
+          id="gamification-welcome-banner"
+          class="mb-6 p-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-brand-500/20 border border-amber-500/40 flex items-center gap-3"
+        >
+
+          <div
+            class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-lg font-bold"
+          >
+            <i class="fa-solid fa-gift"></i>
+          </div>
+
+          <div>
+            <h4
+              class="text-xs font-extrabold text-amber-400 uppercase tracking-wider"
+            >
+              ¡Bono de bienvenida!
+            </h4>
+
+            <p class="text-xs text-slate-200 mt-0.5">
+              Regístrate hoy y recibe
+              <strong class="text-amber-300">
+                +100 Pts
+              </strong>
+              de gamificación de regalo.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form
+          id="form-login"
+          onsubmit="app.handleLogin(event)"
+          class="space-y-4"
+        >
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              Correo Electrónico
+            </label>
+
+            <div class="relative">
+              <i
+                class="fa-regular fa-envelope absolute left-3.5 top-3 text-slate-500 text-sm"
+              ></i>
+
+              <input
+                type="email"
+                id="login-email"
+                required
+                value="socio@fitlife.com"
+                placeholder="usuario@email.com"
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+              >
+            </div>
+          </div>
+
+          <div>
+
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              Contraseña
+            </label>
+
+            <div class="relative">
+
+              <i
+                class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-500 text-sm"
+              ></i>
+
+              <input
+                type="password"
+                id="login-password"
+                required
+                value="123456"
+                placeholder="••••••••"
+                class="w-full pl-10 pr-10 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+              >
+
+              <button
+                type="button"
+                onclick="app.togglePasswordVisibility('login-password')"
+                class="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300"
+              >
+                <i class="fa-regular fa-eye"></i>
+              </button>
+
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3 px-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm shadow-lg shadow-brand-500/25 transition-all"
+          >
+            Ingresar a mi Cuenta
+          </button>
+
+        </form>
+
+
+        <!-- REGISTER FORM -->
+        <form
+          id="form-register"
+          onsubmit="app.handleRegister(event)"
+          class="space-y-4 hidden"
+        >
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              Nombre Completo
+            </label>
+
+            <input
+              type="text"
+              id="reg-name"
+              required
+              placeholder="Ej: Juan Pérez"
+              class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+            >
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              Correo Electrónico
+            </label>
+
+            <input
+              type="email"
+              id="reg-email"
+              required
+              placeholder="tu@email.com"
+              class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+            >
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              Contraseña
+            </label>
+
+            <input
+              type="password"
+              id="reg-password"
+              required
+              placeholder="••••••••"
+              class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+            >
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">
+              ID / Nº de Socio (Opcional)
+            </label>
+
+            <input
+              type="text"
+              id="reg-memberid"
+              placeholder="Ej: FIT-8842"
+              class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-brand-500 text-white font-extrabold rounded-xl text-sm shadow-lg"
+          >
+            <i class="fa-solid fa-star mr-1.5"></i>
+            Crear Cuenta (+100 Pts)
+          </button>
+
+        </form>
+
+        <div
+          class="mt-6 pt-4 border-t border-slate-800/80 text-center text-xs text-slate-500"
+        >
+          Demo de prueba rápida: inicia sesión directamente con las credenciales por defecto.
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== CATÁLOGO ==================== -->
+    <section
+      id="view-catalog"
+      class="hidden space-y-6 w-full"
+    >
+
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl border border-slate-800"
+      >
+
+        <div>
+          <h2 class="text-xl font-bold text-white">
+            Catálogo de Equipamiento Gym
+          </h2>
+
+          <p class="text-xs text-slate-400 mt-1">
+            Selecciona una máquina para verificar o informar su estado.
+          </p>
+        </div>
+
+        <button
+          onclick="app.openQRModal()"
+          class="flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-amber-500 text-white font-bold text-sm shadow-lg"
+        >
+          <i class="fa-solid fa-qrcode text-lg"></i>
+          Escanear Código QR
+        </button>
+
+      </div>
+
+
+      <!-- BUSCADOR -->
+      <div
+        class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3"
+      >
+
+        <div class="relative flex-1">
+
+          <i
+            class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"
+          ></i>
+
+          <input
+            type="text"
+            id="catalog-search"
+            oninput="app.filterMachines()"
+            placeholder="Buscar por nombre o código..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+          >
+
+        </div>
+
+        <div
+          class="flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto"
+        >
+
+          <button
+            onclick="app.setZoneFilter('ALL')"
+            id="filter-zone-ALL"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white whitespace-nowrap"
+          >
+            Todas
+          </button>
+
+          <button
+            onclick="app.setZoneFilter('Musculación')"
+            id="filter-zone-Musculación"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 whitespace-nowrap"
+          >
+            Musculación
+          </button>
+
+          <button
+            onclick="app.setZoneFilter('Cardio')"
+            id="filter-zone-Cardio"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 whitespace-nowrap"
+          >
+            Cardio
+          </button>
+
+          <button
+            onclick="app.setZoneFilter('Funcional')"
+            id="filter-zone-Funcional"
+            class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 whitespace-nowrap"
+          >
+            Funcional
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- MÁQUINAS -->
+      <div
+        id="machines-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      ></div>
+
+    </section>
+
+
+    <!-- ==================== REPORTE ==================== -->
+    <section
+      id="view-report"
+      class="hidden max-w-2xl mx-auto space-y-6"
+    >
+
+      <button
+        onclick="app.navigateTo('catalog')"
+        class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white"
+      >
+        <i class="fa-solid fa-arrow-left"></i>
+        Volver al Catálogo
+      </button>
+
+      <div
+        class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center gap-4"
+      >
+
+        <div
+          class="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-brand-500 text-2xl shrink-0"
+        >
+          <i class="fa-solid fa-weight-hanging"></i>
+        </div>
+
+        <div class="flex-1">
+
+          <div class="flex items-center justify-between gap-2">
+
+            <span
+              id="report-machine-code"
+              class="text-xs font-extrabold text-brand-400 uppercase tracking-widest"
+            >
+              MAQ-001
+            </span>
+
+            <span
+              id="report-machine-status-badge"
+              class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+            >
+              OPERATIVA
+            </span>
+
+          </div>
+
+          <h3
+            id="report-machine-name"
+            class="text-lg font-bold text-white mt-0.5"
+          >
+            Prensa de Piernas 45°
+          </h3>
+
+          <p
+            id="report-machine-location"
+            class="text-xs text-slate-400 mt-0.5"
+          >
+            Ubicación:
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-5"
+      >
+
+        <h4
+          class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"
+        >
+          <i class="fa-solid fa-clipboard-check text-brand-500"></i>
+          ¿Cómo encontraste esta máquina hoy?
+        </h4>
+
+
+        <div class="grid grid-cols-2 gap-3">
+
+          <label class="cursor-pointer">
+
+            <input
+              type="radio"
+              name="report-status"
+              value="GOOD"
+              checked
+              onchange="app.toggleReportFields(false)"
+              class="peer sr-only"
+            >
+
+            <div
+              class="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 peer-checked:bg-emerald-500/10 peer-checked:border-emerald-500 peer-checked:text-emerald-400 text-slate-400 flex items-center justify-center gap-2 text-xs font-bold"
+            >
+              <i class="fa-solid fa-circle-check"></i>
+              Funciona bien
+            </div>
+
+          </label>
+
+
+          <label class="cursor-pointer">
+
+            <input
+              type="radio"
+              name="report-status"
+              value="FAULT"
+              onchange="app.toggleReportFields(true)"
+              class="peer sr-only"
+            >
+
+            <div
+              class="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 peer-checked:bg-amber-500/10 peer-checked:border-amber-500 peer-checked:text-amber-400 text-slate-400 flex items-center justify-center gap-2 text-xs font-bold"
+            >
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Requiere Mantenimiento
+            </div>
+
+          </label>
+
+        </div>
+
+
+        <div
+          id="field-failure-type"
+          class="space-y-1.5 hidden"
+        >
+
+          <label class="block text-xs font-medium text-slate-300">
+            Tipo de Falla o Problema
+          </label>
+
+          <select
+            id="report-failure-type"
+            class="w-full py-2.5 px-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white"
+          >
+            <option>Cable desgastado / Desfilachado</option>
+            <option>Ruido extraño / Falta lubricación</option>
+            <option>Asiento / Tapizado dañado</option>
+            <option>Pantalla / Sensor defectuoso</option>
+            <option>Pieza o tope suelto</option>
+            <option>Otro motivo</option>
+          </select>
+
+        </div>
+
+
+        <div class="space-y-1.5">
+
+          <label class="block text-xs font-medium text-slate-300">
+            Descripción o Comentarios
+          </label>
+
+          <textarea
+            id="report-description"
+            rows="3"
+            placeholder="Ej: El cable de tensión parece desgastado..."
+            class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-white"
+          ></textarea>
+
+        </div>
+
+
+        <div class="space-y-1.5">
+
+          <label class="block text-xs font-medium text-slate-300">
+            Foto del problema
+          </label>
+
+          <button
+            type="button"
+            onclick="app.simulatePhotoUpload()"
+            class="px-4 py-2 bg-slate-800 border border-slate-700 text-slate-200 rounded-xl text-xs font-semibold"
+          >
+            <i class="fa-solid fa-camera"></i>
+            <span id="photo-btn-label">Adjuntar Foto</span>
+          </button>
+
+          <span
+            id="photo-filename"
+            class="text-xs text-slate-400 italic hidden ml-2"
+          >
+            foto_falla_equipo.jpg
+          </span>
+
+        </div>
+
+
+        <div
+          class="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-slate-900/90 border border-brand-500/30 flex items-center justify-between gap-3"
+        >
+
+          <div class="flex items-center gap-3">
+
+            <div
+              class="w-10 h-10 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-award"></i>
+            </div>
+
+            <div>
+              <p
+                class="text-xs font-extrabold text-amber-400 uppercase tracking-wider"
+              >
+                Premio de Gamificación
+              </p>
+
+              <p class="text-xs text-slate-300">
+                ¡Ganarás
+                <strong class="text-brand-400">
+                  +50 Pts
+                </strong>
+                al enviar tu reporte!
+              </p>
+            </div>
+
+          </div>
+
+          <span
+            class="text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30"
+          >
+            +50 Pts
+          </span>
+
+        </div>
+
+
+        <button
+          type="button"
+          onclick="app.submitMachineReport()"
+          class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-500 to-amber-500 text-white font-extrabold rounded-xl text-sm shadow-xl flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-paper-plane"></i>
+          Enviar Reporte de Estado
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================== GAMIFICACIÓN ==================== -->
+    <section
+      id="view-gamification"
+      class="hidden space-y-6 w-full"
+    >
+
+      <div
+        class="glass-panel p-6 rounded-2xl border border-slate-800 relative overflow-hidden"
+      >
+
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-6"
+        >
+
+          <div class="flex items-center gap-4">
+
+            <div
+              class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-amber-500 p-0.5"
+            >
+              <div
+                class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-amber-400 text-2xl"
+              >
+                <i class="fa-solid fa-crown"></i>
+              </div>
+            </div>
+
+            <div>
+
+              <div class="flex items-center gap-2 flex-wrap">
+
+                <h2
+                  id="gami-user-name"
+                  class="text-xl font-bold text-white"
+                >
+                  Juan Pérez
+                </h2>
+
+                <span
+                  id="gami-user-level-badge"
+                  class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                >
+                  Nivel 2: Detector Experto
+                </span>
+
+              </div>
+
+              <p class="text-xs text-slate-400 mt-1">
+                Colabora con el mantenimiento del gym para subir de categoría.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="flex items-center gap-3 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 shrink-0"
+          >
+
+            <div
+              class="p-2.5 rounded-lg bg-amber-500/20 text-amber-400 text-xl"
+            >
+              <i class="fa-solid fa-coins"></i>
+            </div>
+
+            <div>
+              <span class="text-xs text-slate-400 font-semibold block">
+                Puntos Acumulados
+              </span>
+
+              <span
+                id="gami-total-points"
+                class="text-2xl font-black text-amber-400"
+              >
+                350 Pts
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="mt-6 pt-5 border-t border-slate-800/80">
+
+          <div class="flex justify-between items-center text-xs font-bold mb-2">
+
+            <span class="text-slate-300">
+              Progreso de Nivel
+            </span>
+
+            <span
+              id="gami-level-progress-text"
+              class="text-brand-400"
+            >
+              70%
+            </span>
+
+          </div>
+
+          <div
+            class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800"
+          >
+            <div
+              id="gami-level-bar"
+              class="h-full bg-gradient-to-r from-brand-500 to-amber-500 rounded-full"
+              style="width:70%"
+            ></div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- LOGROS -->
+      <div class="space-y-4">
+
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-award text-amber-400"></i>
+          Logros e Insignias
+        </h3>
+
+        <div
+          id="badges-grid"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        ></div>
+
+      </div>
+
+
+      <!-- RECOMPENSAS -->
+      <div class="space-y-4 pt-2">
+
+        <div class="flex items-center justify-between">
+
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-store text-brand-500"></i>
+            Tienda de Recompensas
+          </h3>
+
+          <span class="text-xs text-slate-400">
+            Canjea tus puntos acumulados
+          </span>
+
+        </div>
+
+        <div
+          id="rewards-grid"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================== MANTENIMIENTO ==================== -->
+    <section
+      id="view-maintenance"
+      class="hidden space-y-6 w-full"
+    >
+
+      <div
+        class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
+
+        <div>
+
+          <div
+            class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30 mb-1"
+          >
+            <i class="fa-solid fa-user-gear"></i>
+            Panel Técnico de Mantenimiento
+          </div>
+
+          <h2 class="text-xl font-bold text-white">
+            Gestión de Incidentes y Máquinas
+          </h2>
+
+          <p class="text-xs text-slate-400 mt-0.5">
+            Revisa reportes enviados por miembros y actualiza el estado del equipamiento.
+          </p>
+
+        </div>
+
+
+        <div class="flex items-center gap-2 text-xs font-bold">
+
+          <span
+            id="tech-pending-count"
+            class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30"
+          >
+            2 Pendientes
+          </span>
+
+          <span
+            id="tech-total-machines"
+            class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700"
+          >
+            8 Máquinas
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="space-y-4">
+
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">
+          Historial de Reportes de Usuarios
+        </h3>
+
+        <div
+          id="tech-reports-list"
+          class="space-y-3"
+        ></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==================== NAVEGACIÓN INFERIOR ==================== -->
+  <nav
+    id="bottom-nav"
+    class="hidden fixed bottom-0 left-0 right-0 z-30 glass-panel border-t border-slate-800 px-4 py-2"
+  >
+
+    <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
+
+      <button
+        onclick="app.navigateTo('catalog')"
+        id="nav-btn-catalog"
+        class="flex flex-col items-center gap-1 py-1 text-brand-500 font-bold"
+      >
+        <i class="fa-solid fa-th-large text-lg"></i>
+        <span class="text-[10px]">Catálogo</span>
+      </button>
+
+      <button
+        onclick="app.openQRModal()"
+        class="flex flex-col items-center gap-1 py-1 text-slate-400"
+      >
+        <i class="fa-solid fa-qrcode text-lg"></i>
+        <span class="text-[10px]">Escanear</span>
+      </button>
+
+      <button
+        onclick="app.navigateTo('gamification')"
+        id="nav-btn-gamification"
+        class="flex flex-col items-center gap-1 py-1 text-slate-400"
+      >
+        <i class="fa-solid fa-trophy text-lg"></i>
+        <span class="text-[10px]">Logros</span>
+      </button>
+
+      <button
+        onclick="app.navigateTo('maintenance')"
+        id="nav-btn-maintenance"
+        class="flex flex-col items-center gap-1 py-1 text-slate-400"
+      >
+        <i class="fa-solid fa-wrench text-lg"></i>
+        <span class="text-[10px]">Técnico</span>
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <!-- ==================== MODAL QR ==================== -->
+  <div
+    id="modal-qr"
+    class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4"
+  >
+
+    <div
+      class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-slate-800 space-y-5 text-center relative"
+    >
+
+      <button
+        onclick="app.closeQRModal()"
+        class="absolute top-4 right-4 text-slate-400 hover:text-white"
+      >
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div
+        class="w-16 h-16 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center mx-auto text-3xl"
+      >
+        <i class="fa-solid fa-qrcode"></i>
+      </div>
+
+      <div>
+
+        <h3 class="text-lg font-bold text-white">
+          Escanear Código QR
+        </h3>
+
+        <p class="text-xs text-slate-400 mt-1">
+          Selecciona una máquina para abrir su ficha de reporte.
+        </p>
+
+      </div>
+
+
+      <div
+        class="relative w-48 h-48 mx-auto border-2 border-dashed border-brand-500 rounded-2xl bg-slate-900 flex items-center justify-center overflow-hidden"
+      >
+
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-brand-500/10 via-transparent to-brand-500/10 animate-pulse"
+        ></div>
+
+        <i class="fa-solid fa-camera text-4xl text-slate-700"></i>
+
+        <div
+          class="absolute bottom-2 text-[10px] text-brand-400 font-mono"
+        >
+          Buscando código...
+        </div>
+
+      </div>
+
+
+      <div class="space-y-2 text-left">
+
+        <label class="block text-xs font-semibold text-slate-400">
+          O selecciona una máquina:
+        </label>
+
+        <div
+          id="qr-quick-list"
+          class="space-y-1.5 max-h-36 overflow-y-auto pr-1"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==================== TOAST ==================== -->
+  <div
+    id="toast-container"
+    class="fixed bottom-20 sm:bottom-6 right-4 left-4 sm:left-auto sm:right-6 z-[60] space-y-2 pointer-events-none max-w-sm ml-auto"
+  ></div>
+
+</div>
+
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+
+const SimulatedServerAPI = {
+
+  KEYS: {
+    USER: 'fitlife_user_session',
+    MACHINES: 'fitlife_machines_db',
+    REPORTS: 'fitlife_reports_db',
+    BADGES: 'fitlife_badges_db',
+    REWARDS: 'fitlife_rewards_db'
+  },
+
+
+  init() {
+
+    if (!localStorage.getItem(this.KEYS.MACHINES)) {
+
+      const machines = [
+
+        {
+          id: 'MAQ-001',
+          name: 'Prensa de Piernas 45°',
+          category: 'Fuerza',
+          zone: 'Musculación',
+          status: 'OPERATIVA',
+          location: 'Zona Musculación - Sector B',
+          icon: 'fa-layer-group'
+        },
+
+        {
+          id: 'MAQ-002',
+          name: 'Cinta de Correr Pro XT',
+          category: 'Cardio',
+          zone: 'Cardio',
+          status: 'REQUIERE MANTENIMIENTO',
+          location: 'Zona Cardio - Fila 1',
+          icon: 'fa-person-running'
+        },
+
+        {
+          id: 'MAQ-003',
+          name: 'Jalón al Pecho / Polea Alta',
+          category: 'Fuerza',
+          zone: 'Musculación',
+          status: 'OPERATIVA',
+          location: 'Zona Musculación - Sector A',
+          icon: 'fa-dumbbell'
+        },
+
+        {
+          id: 'MAQ-004',
+          name: 'Bicicleta Estática Spin X',
+          category: 'Cardio',
+          zone: 'Cardio',
+          status: 'FUERA DE SERVICIO',
+          location: 'Zona Spin - Sector C',
+          icon: 'fa-person-biking'
+        },
+
+        {
+          id: 'MAQ-005',
+          name: 'Elíptica Ergométrica',
+          category: 'Cardio',
+          zone: 'Cardio',
+          status: 'OPERATIVA',
+          location: 'Zona Cardio - Fila 2',
+          icon: 'fa-heart-pulse'
+        },
+
+        {
+          id: 'MAQ-006',
+          name: 'Rack de Sentadillas Power',
+          category: 'Fuerza',
+          zone: 'Musculación',
+          status: 'OPERATIVA',
+          location: 'Zona Libres - Sector A',
+          icon: 'fa-weight-hanging'
+        },
+
+        {
+          id: 'MAQ-007',
+          name: 'Remo de Cable Sentado',
+          category: 'Fuerza',
+          zone: 'Musculación',
+          status: 'OPERATIVA',
+          location: 'Zona Musculación - Sector C',
+          icon: 'fa-dharmachakra'
+        },
+
+        {
+          id: 'MAQ-008',
+          name: 'Caminadora Curva Manual',
+          category: 'Funcional',
+          zone: 'Funcional',
+          status: 'OPERATIVA',
+          location: 'Zona Cross/Funcional',
+          icon: 'fa-bolt'
+        }
+
+      ];
+
+      localStorage.setItem(
+        this.KEYS.MACHINES,
+        JSON.stringify(machines)
+      );
+    }
+
+
+    if (!localStorage.getItem(this.KEYS.BADGES)) {
+
+      const badges = [
+
+        {
+          id: 'b1',
+          name: 'Primer Paso',
+          desc: 'Registra tu cuenta e ingresa a FitLife',
+          points: 100,
+          icon: 'fa-user-check',
+          unlocked: true
+        },
+
+        {
+          id: 'b2',
+          name: 'Detector de Fallas N1',
+          desc: 'Envía tu primer reporte de máquina',
+          points: 50,
+          icon: 'fa-shield-halved',
+          unlocked: true
+        },
+
+        {
+          id: 'b3',
+          name: 'Guardián del Gym',
+          desc: 'Envía 3 reportes válidos',
+          points: 150,
+          icon: 'fa-award',
+          unlocked: false
+        },
+
+        {
+          id: 'b4',
+          name: 'Socio Inspector',
+          desc: 'Revisa 5 máquinas distintas',
+          points: 100,
+          icon: 'fa-magnifying-glass',
+          unlocked: false
+        },
+
+        {
+          id: 'b5',
+          name: 'Cero Errores',
+          desc: 'Confirma 5 máquinas operativas',
+          points: 100,
+          icon: 'fa-circle-check',
+          unlocked: false
+        }
+
+      ];
+
+      localStorage.setItem(
+        this.KEYS.BADGES,
+        JSON.stringify(badges)
+      );
+    }
+
+
+    if (!localStorage.getItem(this.KEYS.REWARDS)) {
+
+      const rewards = [
+
+        {
+          id: 'r1',
+          name: 'Batido Proteico Whey 500ml',
+          pointsCost: 200,
+          icon: 'fa-wine-bottle',
+          category: 'Nutrición'
+        },
+
+        {
+          id: 'r2',
+          name: 'Toalla Deportiva Microfibra',
+          pointsCost: 350,
+          icon: 'fa-mattress-pillow',
+          category: 'Accesorios'
+        },
+
+        {
+          id: 'r3',
+          name: 'Pase de Día para un Amigo',
+          pointsCost: 300,
+          icon: 'fa-ticket',
+          category: 'Pases'
+        },
+
+        {
+          id: 'r4',
+          name: '20% Descuento en Cuota Mensual',
+          pointsCost: 600,
+          icon: 'fa-percent',
+          category: 'Suscripción'
+        },
+
+        {
+          id: 'r5',
+          name: 'Sesión Personal Trainer (45 min)',
+          pointsCost: 800,
+          icon: 'fa-stopwatch',
+          category: 'Entrenamiento'
+        }
+
+      ];
+
+      localStorage.setItem(
+        this.KEYS.REWARDS,
+        JSON.stringify(rewards)
+      );
+    }
+
+
+    if (!localStorage.getItem(this.KEYS.REPORTS)) {
+
+      const reports = [
+
+        {
+          id: 'rep-101',
+          machineId: 'MAQ-002',
+          user: 'Juan Pérez',
+          date: 'Hace 2 horas',
+          statusOption: 'FAULT',
+          failureType: 'Ruido extraño / Falta lubricación',
+          description: 'Chirria bastante al correr a más de 10 km/h',
+          status: 'PENDIENTE'
+        },
+
+        {
+          id: 'rep-102',
+          machineId: 'MAQ-004',
+          user: 'María Gómez',
+          date: 'Ayer',
+          statusOption: 'FAULT',
+          failureType: 'Pedal flojo',
+          description: 'El pedal derecho no ajusta firme',
+          status: 'PENDIENTE'
+        }
+
+      ];
+
+      localStorage.setItem(
+        this.KEYS.REPORTS,
+        JSON.stringify(reports)
+      );
+    }
+
+  },
+
+
+  getUser() {
+
+    const saved = localStorage.getItem(this.KEYS.USER);
+
+    if (saved) {
+      return JSON.parse(saved);
+    }
+
+    const user = {
+      name: 'Juan Pérez',
+      email: 'socio@fitlife.com',
+      memberId: 'FIT-1042',
+      role: 'Miembro',
+      puntosTotales: 350,
+      level: 2,
+      levelName: 'Detector Experto'
+    };
+
+    localStorage.setItem(
+      this.KEYS.USER,
+      JSON.stringify(user)
+    );
+
+    return user;
+  },
+
+
+  saveUser(user) {
+    localStorage.setItem(
+      this.KEYS.USER,
+      JSON.stringify(user)
+    );
+  },
+
+
+  getMachines() {
+    return JSON.parse(
+      localStorage.getItem(this.KEYS.MACHINES)
+    ) || [];
+  },
+
+
+  getMachineById(id) {
+    return this.getMachines().find(
+      machine => machine.id === id
+    );
+  },
+
+
+  updateMachineStatus(id, status) {
+
+    const machines = this.getMachines();
+
+    const machine = machines.find(
+      m => m.id === id
+    );
+
+    if (machine) {
+
+      machine.status = status;
+
+      localStorage.setItem(
+        this.KEYS.MACHINES,
+        JSON.stringify(machines)
+      );
+
+    }
+
+  },
+
+
+  getReports() {
+
+    return JSON.parse(
+      localStorage.getItem(this.KEYS.REPORTS)
+    ) || [];
+
+  },
+
+
+  addReport(data) {
+
+    const reports = this.getReports();
+
+    const report = {
+      id: 'rep-' + Date.now(),
+      date: 'Justo ahora',
+      status: 'PENDIENTE',
+      ...data
+    };
+
+    reports.unshift(report);
+
+    localStorage.setItem(
+      this.KEYS.REPORTS,
+      JSON.stringify(reports)
+    );
+
+    if (data.statusOption === 'FAULT') {
+
+      this.updateMachineStatus(
+        data.machineId,
+        'REQUIERE MANTENIMIENTO'
+      );
+
+    }
+
+    return report;
+  },
+
+
+  resolveReport(id) {
+
+    const reports = this.getReports();
+
+    const report = reports.find(
+      r => r.id === id
+    );
+
+    if (report) {
+
+      report.status = 'RESUELTO';
+
+      localStorage.setItem(
+        this.KEYS.REPORTS,
+        JSON.stringify(reports)
+      );
+
+      this.updateMachineStatus(
+        report.machineId,
+        'OPERATIVA'
+      );
+
+    }
+
+  },
+
+
+  getBadges() {
+
+    return JSON.parse(
+      localStorage.getItem(this.KEYS.BADGES)
+    ) || [];
+
+  },
+
+
+  getRewards() {
+
+    return JSON.parse(
+      localStorage.getItem(this.KEYS.REWARDS)
+    ) || [];
+
+  }
+
+};
+
+
+/* ==================== APP ==================== */
+
+const app = {
+
+  state: {
+
+    user: null,
+
+    currentView: 'login',
+
+    selectedMachineId: 'MAQ-001',
+
+    activeZoneFilter: 'ALL',
+
+    photoAttached: false
+
+  },
+
+
+  init() {
+
+    SimulatedServerAPI.init();
+
+    this.state.user =
+      SimulatedServerAPI.getUser();
+
+    this.navigateTo('catalog');
+
+    this.updateUserHeaderUI();
+
+  },
+
+
+  navigateTo(viewId) {
+
+    const views = [
+      'view-login',
+      'view-catalog',
+      'view-report',
+      'view-gamification',
+      'view-maintenance'
+    ];
+
+    views.forEach(view => {
+
+      const element =
+        document.getElementById(view);
+
+      if (element) {
+        element.classList.add('hidden');
+      }
+
+    });
+
+
+    const target =
+      document.getElementById(
+        `view-${viewId}`
+      );
+
+    if (target) {
+
+      target.classList.remove('hidden');
+
+      this.state.currentView =
+        viewId;
+
+    }
+
+
+    const header =
+      document.getElementById(
+        'header-user-widget'
+      );
+
+    const bottom =
+      document.getElementById(
+        'bottom-nav'
+      );
+
+
+    if (viewId === 'login') {
+
+      header.classList.add('hidden');
+
+      bottom.classList.add('hidden');
+
+    } else {
+
+      header.classList.remove('hidden');
+
+      header.classList.add('flex');
+
+      bottom.classList.remove('hidden');
+
+      bottom.classList.add('flex');
+
+    }
+
+
+    this.updateBottomNavHighlight(
+      viewId
+    );
+
+
+    if (viewId === 'catalog') {
+      this.renderCatalog();
+    }
+
+    if (viewId === 'report') {
+      this.renderReportForm();
+    }
+
+    if (viewId === 'gamification') {
+      this.renderGamification();
+    }
+
+    if (viewId === 'maintenance') {
+      this.renderMaintenance();
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+  },
+
+
+  updateBottomNavHighlight(viewId) {
+
+    [
+      'catalog',
+      'gamification',
+      'maintenance'
+    ].forEach(nav => {
+
+      const btn =
+        document.getElementById(
+          `nav-btn-${nav}`
+        );
+
+      if (!btn) return;
+
+      if (nav === viewId) {
+
+        btn.className =
+          'flex flex-col items-center gap-1 py-1 text-brand-500 font-bold';
+
+      } else {
+
+        btn.className =
+          'flex flex-col items-center gap-1 py-1 text-slate-400';
+
+      }
+
+    });
+
+  },
+
+
+  switchAuthTab(tab) {
+
+    const login =
+      document.getElementById(
+        'form-login'
+      );
+
+    const register =
+      document.getElementById(
+        'form-register'
+      );
+
+    const loginBtn =
+      document.getElementById(
+        'tab-login-btn'
+      );
+
+    const registerBtn =
+      document.getElementById(
+        'tab-register-btn'
+      );
+
+
+    if (tab === 'login') {
+
+      login.classList.remove('hidden');
+
+      register.classList.add('hidden');
+
+      loginBtn.className =
+        'py-2.5 text-sm font-semibold rounded-lg bg-brand-500 text-white shadow-md';
+
+      registerBtn.className =
+        'py-2.5 text-sm font-semibold rounded-lg text-slate-400';
+
+    } else {
+
+      login.classList.add('hidden');
+
+      register.classList.remove('hidden');
+
+      registerBtn.className =
+        'py-2.5 text-sm font-semibold rounded-lg bg-brand-500 text-white shadow-md';
+
+      loginBtn.className =
+        'py-2.5 text-sm font-semibold rounded-lg text-slate-400';
+
+    }
+
+  },
+
+
+  togglePasswordVisibility(id) {
+
+    const input =
+      document.getElementById(id);
+
+    if (input) {
+
+      input.type =
+        input.type === 'password'
+          ? 'text'
+          : 'password';
+
+    }
+
+  },
+
+
+  handleLogin(event) {
+
+    event.preventDefault();
+
+    const email =
+      document.getElementById(
+        'login-email'
+      ).value;
+
+    this.state.user = {
+
+      name:
+        email.split('@')[0] ||
+        'Socio Gym',
+
+      email,
+
+      memberId: 'FIT-2026',
+
+      role: 'Miembro',
+
+      puntosTotales: 350,
+
+      level: 2,
+
+      levelName: 'Detector Experto'
+
+    };
+
+    SimulatedServerAPI.saveUser(
+      this.state.user
+    );
+
+    this.updateUserHeaderUI();
+
+    this.showToast(
+      '¡Sesión Iniciada!',
+      'Bienvenido nuevamente a FitLife Gym',
+      'success'
+    );
+
+    this.navigateTo('catalog');
+
+  },
+
+
+  handleRegister(event) {
+
+    event.preventDefault();
+
+    const name =
+      document.getElementById(
+        'reg-name'
+      ).value;
+
+    const email =
+      document.getElementById(
+        'reg-email'
+      ).value;
+
+    const memberId =
+      document.getElementById(
+        'reg-memberid'
+      ).value || 'FIT-NEW';
+
+
+    this.state.user = {
+
+      name,
+
+      email,
+
+      memberId,
+
+      role: 'Miembro',
+
+      puntosTotales: 100,
+
+      level: 1,
+
+      levelName:
+        'Novato Registrado'
+
+    };
+
+
+    SimulatedServerAPI.saveUser(
+      this.state.user
+    );
+
+    this.updateUserHeaderUI();
+
+    this.showToast(
+      '¡Cuenta Creada!',
+      'Ganaste +100 Pts de bienvenida 🎉',
+      'gold'
+    );
+
+    this.navigateTo('catalog');
+
+  },
+
+
+  logout() {
+
+    localStorage.removeItem(
+      SimulatedServerAPI.KEYS.USER
+    );
+
+    this.state.user = null;
+
+    this.showToast(
+      'Sesión Cerrada',
+      'Hasta pronto',
+      'info'
+    );
+
+    setTimeout(() => {
+      location.reload();
+    }, 500);
+
+  },
+
+
+  toggleRole() {
+
+    if (!this.state.user) return;
+
+    this.state.user.role =
+      this.state.user.role === 'Miembro'
+        ? 'Técnico'
+        : 'Miembro';
+
+    SimulatedServerAPI.saveUser(
+      this.state.user
+    );
+
+    this.updateUserHeaderUI();
+
+    if (
+      this.state.user.role ===
+      'Técnico'
+    ) {
+
+      this.navigateTo(
+        'maintenance'
+      );
+
+    } else {
+
+      this.navigateTo(
+        'catalog'
+      );
+
+    }
+
+  },
+
+
+  updateUserHeaderUI() {
+
+    if (!this.state.user) return;
+
+    document.getElementById(
+      'header-user-points'
+    ).innerText =
+      this.state.user.puntosTotales;
+
+    document.getElementById(
+      'role-badge-text'
+    ).innerText =
+      this.state.user.role;
+
+    const initials =
+      this.state.user.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
+
+    document.getElementById(
+      'header-user-initials'
+    ).innerText =
+      initials || 'FL';
+
+  },
+
+
+  setZoneFilter(zone) {
+
+    this.state.activeZoneFilter =
+      zone;
+
+    this.renderCatalog();
+
+  },
+
+
+  filterMachines() {
+
+    this.renderCatalog();
+
+  },
+
+
+  renderCatalog() {
+
+    const grid =
+      document.getElementById(
+        'machines-grid'
+      );
+
+    if (!grid) return;
+
+    const machines =
+      SimulatedServerAPI.getMachines();
+
+    const search =
+      (
+        document.getElementById(
+          'catalog-search'
+        )?.value || ''
+      ).toLowerCase();
+
+    const zone =
+      this.state.activeZoneFilter;
+
+
+    const filtered =
+      machines.filter(machine => {
+
+        const matchesSearch =
+          machine.name
+            .toLowerCase()
+            .includes(search) ||
+          machine.id
+            .toLowerCase()
+            .includes(search);
+
+        const matchesZone =
+          zone === 'ALL' ||
+          machine.zone === zone;
+
+        return (
+          matchesSearch &&
+          matchesZone
+        );
+
+      });
+
+
+    if (!filtered.length) {
+
+      grid.innerHTML = `
+        <div class="col-span-full py-12 text-center glass-panel rounded-2xl p-6">
+          <i class="fa-solid fa-magnifying-glass text-3xl text-slate-600 mb-2"></i>
+          <p class="text-sm font-semibold text-slate-300">
+            No se encontraron máquinas.
+          </p>
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    grid.innerHTML =
+      filtered.map(machine => {
+
+        let statusClass =
+          'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+
+        if (
+          machine.status ===
+          'REQUIERE MANTENIMIENTO'
+        ) {
+
+          statusClass =
+            'bg-amber-500/20 text-amber-400 border-amber-500/30';
+
+        }
+
+        if (
+          machine.status ===
+          'FUERA DE SERVICIO'
+        ) {
+
+          statusClass =
+            'bg-red-500/20 text-red-400 border-red-500/30';
+
+        }
+
+
+        return `
+
+          <div
+            onclick="app.selectMachineAndReport('${machine.id}')"
+            class="glass-panel rounded-2xl p-4 border border-slate-800/80 hover:border-brand-500/50 transition-all cursor-pointer group flex flex-col justify-between"
+          >
+
+            <div>
+
+              <div class="flex items-center justify-between mb-3">
+
+                <span
+                  class="text-[10px] font-extrabold text-brand-400 tracking-wider"
+                >
+                  ${machine.id}
+                </span>
+
+                <span
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusClass}"
+                >
+                  ${machine.status}
+                </span>
+
+              </div>
+
+
+              <div class="flex items-center gap-3 mb-3">
+
+                <div
+                  class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-brand-500 text-xl group-hover:bg-brand-500 group-hover:text-white transition-colors"
+                >
+                  <i class="fa-solid ${machine.icon}"></i>
+                </div>
+
+                <div>
+
+                  <h4
+                    class="font-bold text-sm text-white group-hover:text-brand-400"
+                  >
+                    ${machine.name}
+                  </h4>
+
+                  <p class="text-xs text-slate-400 mt-0.5">
+                    <i class="fa-solid fa-location-dot text-[10px]"></i>
+                    ${machine.zone}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400"
+            >
+
+              <span class="text-[11px]">
+                <i class="fa-solid fa-award text-amber-400 mr-1"></i>
+                +50 Pts
+              </span>
+
+              <span class="font-semibold text-brand-400">
+                Informar estado
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              </span>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join('');
+
+  },
+
+
+  selectMachineAndReport(id) {
+
+    this.state.selectedMachineId =
+      id;
+
+    this.navigateTo('report');
+
+  },
+
+
+  renderReportForm() {
+
+    const machine =
+      SimulatedServerAPI.getMachineById(
+        this.state.selectedMachineId
+      );
+
+    if (!machine) return;
+
+
+    document.getElementById(
+      'report-machine-code'
+    ).innerText =
+      machine.id;
+
+    document.getElementById(
+      'report-machine-name'
+    ).innerText =
+      machine.name;
+
+    document.getElementById(
+      'report-machine-location'
+    ).innerText =
+      'Ubicación: ' +
+      machine.location;
+
+
+    const badge =
+      document.getElementById(
+        'report-machine-status-badge'
+      );
+
+    badge.innerText =
+      machine.status;
+
+
+    if (
+      machine.status ===
+      'OPERATIVA'
+    ) {
+
+      badge.className =
+        'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+
+    } else if (
+      machine.status ===
+      'REQUIERE MANTENIMIENTO'
+    ) {
+
+      badge.className =
+        'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+
+    } else {
+
+      badge.className =
+        'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30';
+
+    }
+
+
+    document.getElementById(
+      'report-description'
+    ).value = '';
+
+    document.querySelector(
+      'input[value="GOOD"]'
+    ).checked = true;
+
+    this.toggleReportFields(
+      false
+    );
+
+    this.state.photoAttached =
+      false;
+
+    document.getElementById(
+      'photo-filename'
+    ).classList.add('hidden');
+
+    document.getElementById(
+      'photo-btn-label'
+    ).innerText =
+      'Adjuntar Foto';
+
+  },
+
+
+  toggleReportFields(isFault) {
+
+    const field =
+      document.getElementById(
+        'field-failure-type'
+      );
+
+    if (isFault) {
+
+      field.classList.remove(
+        'hidden'
+      );
+
+    } else {
+
+      field.classList.add(
+        'hidden'
+      );
+
+    }
+
+  },
+
+
+  simulatePhotoUpload() {
+
+    this.state.photoAttached =
+      true;
+
+    document.getElementById(
+      'photo-filename'
+    ).classList.remove('hidden');
+
+    document.getElementById(
+      'photo-btn-label'
+    ).innerText =
+      'Foto Cargada';
+
+    this.showToast(
+      'Foto Adjuntada',
+      'Se cargó la imagen correctamente.',
+      'info'
+    );
+
+  },
+
+
+  submitMachineReport() {
+
+    const selected =
+      document.querySelector(
+        'input[name="report-status"]:checked'
+      );
+
+    if (!selected) return;
+
+    const isFault =
+      selected.value === 'FAULT';
+
+    const failureType =
+      isFault
+        ? document.getElementById(
+            'report-failure-type'
+          ).value
+        : 'Verificación Operativa';
+
+    const description =
+      document.getElementById(
+        'report-description'
+      ).value ||
+      'Sin comentarios adicionales.';
+
+
+    SimulatedServerAPI.addReport({
+
+      machineId:
+        this.state.selectedMachineId,
+
+      user:
+        this.state.user.name,
+
+      statusOption:
+        isFault
+          ? 'FAULT'
+          : 'GOOD',
+
+      failureType,
+
+      description,
+
+      hasPhoto:
+        this.state.photoAttached
+
+    });
+
+
+    this.state.user.puntosTotales += 50;
+
+    SimulatedServerAPI.saveUser(
+      this.state.user
+    );
+
+    this.updateUserHeaderUI();
+
+    this.showToast(
+      '¡Reporte Enviado!',
+      'Ganaste +50 Pts de gamificación 🏆',
+      'gold'
+    );
+
+    this.navigateTo(
+      'catalog'
+    );
+
+  },
+
+
+  renderGamification() {
+
+    const user =
+      this.state.user;
+
+    document.getElementById(
+      'gami-user-name'
+    ).innerText =
+      user.name;
+
+    document.getElementById(
+      'gami-total-points'
+    ).innerText =
+      `${user.puntosTotales} Pts`;
+
+
+    const goal = 500;
+
+    const progress =
+      Math.min(
+        100,
+        Math.round(
+          user.puntosTotales /
+          goal *
+          100
+        )
+      );
+
+
+    document.getElementById(
+      'gami-level-progress-text'
+    ).innerText =
+      `progress%({user.puntosTotales} / ${goal} Pts para Nivel 3)`;
+
+
+    document.getElementById(
+      'gami-level-bar'
+    ).style.width =
+      `${progress}%`;
+
+
+    const badges =
+      SimulatedServerAPI.getBadges();
+
+
+    document.getElementById(
+      'badges-grid'
+    ).innerHTML =
+
+      badges.map(badge => {
+
+        const unlocked =
+          badge.unlocked ||
+          user.puntosTotales >= 200;
+
+
+        return `
+
+          <div
+            class="glass-panel p-4 rounded-xl border ${
+              unlocked
+                ? 'border-amber-500/40'
+                : 'border-slate-800 opacity-60'
+            } flex items-start gap-3"
+          >
+
+            <div
+              class="w-10 h-10 rounded-xl ${
+                unlocked
+                  ? 'bg-amber-500/20 text-amber-400'
+                  : 'bg-slate-800 text-slate-500'
+              } flex items-center justify-center shrink-0"
+            >
+              <i class="fa-solid ${badge.icon}"></i>
+            </div>
+
+            <div class="flex-1">
+
+              <div class="flex items-center justify-between gap-2">
+
+                <h4 class="text-xs font-bold text-white">
+                  ${badge.name}
+                </h4>
+
+                <span class="text-[10px] font-extrabold text-amber-400">
+                  +${badge.points} Pts
+                </span>
+
+              </div>
+
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                ${badge.desc}
+              </p>
+
+              <span
+                class="inline-block mt-2 text-[10px] font-bold ${
+                  unlocked
+                    ? 'text-emerald-400 bg-emerald-500/10'
+                    : 'text-slate-500 bg-slate-800'
+                } px-2 py-0.5 rounded"
+              >
+                ${
+                  unlocked
+                    ? '✓ Desbloqueado'
+                    : '🔒 En Progreso'
+                }
+              </span>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join('');
+
+
+    const rewards =
+      SimulatedServerAPI.getRewards();
+
+
+    document.getElementById(
+      'rewards-grid'
+    ).innerHTML =
+
+      rewards.map(reward => {
+
+        const canAfford =
+          user.puntosTotales >=
+          reward.pointsCost;
+
+
+        return `
+
+          <div
+            class="glass-panel p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-3"
+          >
+
+            <div class="flex items-start gap-3">
+
+              <div
+                class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-lg shrink-0"
+              >
+                <i class="fa-solid ${reward.icon}"></i>
+              </div>
+
+              <div>
+
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider text-slate-400"
+                >
+                  ${reward.category}
+                </span>
+
+                <h4 class="text-xs font-bold text-white mt-0.5">
+                  ${reward.name}
+                </h4>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="pt-2 border-t border-slate-800 flex items-center justify-between"
+            >
+
+              <span class="text-xs font-extrabold text-amber-400">
+                ${reward.pointsCost} Pts
+              </span>
+
+              <button
+                onclick="app.redeemReward('${reward.id}', reward.pointsCost,'{reward.name}')"
+                ${!canAfford ? 'disabled' : ''}
+                class="px-3 py-1.5 rounded-lg text-xs font-bold ${
+                  canAfford
+                    ? 'bg-brand-500 text-white'
+                    : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                }"
+              >
+                ${
+                  canAfford
+                    ? 'Canjear'
+                    : 'Puntos Insuficientes'
+                }
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join('');
+
+  },
+
+
+  redeemReward(id, cost, name) {
+
+    if (
+      this.state.user.puntosTotales <
+      cost
+    ) {
+
+      this.showToast(
+        'Puntos Insuficientes',
+        'Sigue sumando reportes para conseguir este premio.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    this.state.user.puntosTotales -=
+      cost;
+
+    SimulatedServerAPI.saveUser(
+      this.state.user
+    );
+
+    this.updateUserHeaderUI();
+
+    this.renderGamification();
+
+    this.showToast(
+      '¡Premio Canjeado!',
+      `Has canjeado "${name}".`,
+      'success'
+    );
+
+  },
+
+
+  renderMaintenance() {
+
+    const reports =
+      SimulatedServerAPI.getReports();
+
+    const pending =
+      reports.filter(
+        r => r.status === 'PENDIENTE'
+      );
+
+
+    document.getElementById(
+      'tech-pending-count'
+    ).innerText =
+      `${pending.length} Pendientes`;
+
+
+    const container =
+      document.getElementById(
+        'tech-reports-list'
+      );
+
+
+    if (!reports.length) {
+
+      container.innerHTML =
+        `
+        <p class="text-xs text-slate-400">
+          No hay reportes registrados.
+        </p>
+        `;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+
+      reports.map(report => {
+
+        const machine =
+          SimulatedServerAPI.getMachineById(
+            report.machineId
+          ) || {
+            name: report.machineId
+          };
+
+
+        const resolved =
+          report.status ===
+          'RESUELTO';
+
+
+        return `
+
+          <div
+            class="glass-panel p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          >
+
+            <div class="space-y-1">
+
+              <div class="flex items-center gap-2 flex-wrap">
+
+                <span class="text-xs font-bold text-brand-400">
+                  ${report.machineId}
+                </span>
+
+                <span class="text-xs font-bold text-white">
+                  • ${machine.name}
+                </span>
+
+                <span
+                  class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    resolved
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'bg-amber-500/20 text-amber-400'
+                  }"
+                >
+                  ${report.status}
+                </span>
+
+              </div>
+
+              <p class="text-xs text-slate-300">
+                <strong>Tipo:</strong>
+                ${report.failureType}
+              </p>
+
+              <p class="text-xs text-slate-400">
+                "${report.description}"
+              </p>
+
+              <p class="text-[10px] text-slate-500">
+                Reportado por:
+                ${report.user}
+                (${report.date})
+              </p>
+
+            </div>
+
+
+            ${
+              !resolved
+                ? `
+                  <button
+                    onclick="app.resolveMaintenanceReport('${report.id}')"
+                    class="px-3.5 py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs whitespace-nowrap"
+                  >
+                    <i class="fa-solid fa-check-double mr-1"></i>
+                    Marcar Reparado
+                  </button>
+                `
+                : `
+                  <span class="text-xs text-emerald-400 font-semibold">
+                    <i class="fa-solid fa-circle-check mr-1"></i>
+                    Reparado
+                  </span>
+                `
+            }
+
+          </div>
+
+        `;
+
+      }).join('');
+
+  },
+
+
+  resolveMaintenanceReport(id) {
+
+    SimulatedServerAPI.resolveReport(
+      id
+    );
+
+    this.renderMaintenance();
+
+    this.showToast(
+      'Máquina Reparada',
+      'El estado volvió a OPERATIVA.',
+      'success'
+    );
+
+  },
+
+
+  openQRModal() {
+
+    const modal =
+      document.getElementById(
+        'modal-qr'
+      );
+
+    modal.classList.remove(
+      'hidden'
+    );
+
+    modal.classList.add(
+      'flex'
+    );
+
+
+    const machines =
+      SimulatedServerAPI.getMachines();
+
+
+    document.getElementById(
+      'qr-quick-list'
+    ).innerHTML =
+
+      machines.map(machine => `
+
+        <button
+          onclick="app.closeQRModal(); app.selectMachineAndReport('${machine.id}')"
+          class="w-full text-left p-2 rounded-lg bg-slate-900/80 hover:bg-brand-500/20 border border-slate-800 text-xs font-medium text-slate-200 flex items-center justify-between"
+        >
+
+          <span>
+            ${machine.id} - ${machine.name}
+          </span>
+
+          <i class="fa-solid fa-qrcode text-slate-500"></i>
+
+        </button>
+
+      `).join('');
+
+  },
+
+
+  closeQRModal() {
+
+    const modal =
+      document.getElementById(
+        'modal-qr'
+      );
+
+    modal.classList.add(
+      'hidden'
+    );
+
+    modal.classList.remove(
+      'flex'
+    );
+
+  },
+
+
+  /* PANTALLA COMPLETA */
+
+  toggleFullscreen() {
+
+    const element =
+      document.documentElement;
+
+    if (
+      !document.fullscreenElement
+    ) {
+
+      if (
+        element.requestFullscreen
+      ) {
+
+        element.requestFullscreen();
+
+      }
+
+    } else {
+
+      if (
+        document.exitFullscreen
+      ) {
+
+        document.exitFullscreen();
+
+      }
+
+    }
+
+  },
+
+
+  showToast(
+    title,
+    message,
+    type = 'info'
+  ) {
+
+    const container =
+      document.getElementById(
+        'toast-container'
+      );
+
+    if (!container) return;
+
+
+    const toast =
+      document.createElement(
+        'div'
+      );
+
+
+    let border =
+      'border-slate-700 bg-slate-900';
+
+    let icon =
+      '<i class="fa-solid fa-circle-info text-blue-400"></i>';
+
+
+    if (type === 'gold') {
+
+      border =
+        'border-amber-500/60 bg-slate-900';
+
+      icon =
+        '<i class="fa-solid fa-trophy text-amber-400"></i>';
+
+    }
+
+
+    if (type === 'success') {
+
+      border =
+        'border-emerald-500/60 bg-slate-900';
+
+      icon =
+        '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+
+    }
+
+
+    if (type === 'error') {
+
+      border =
+        'border-red-500/60 bg-slate-900';
+
+      icon =
+        '<i class="fa-solid fa-circle-xmark text-red-400"></i>';
+
+    }
+
+
+    toast.className =
+      `p-3.5 rounded-xl border ${border} shadow-2xl pointer-events-auto flex items-start gap-3 transition-all duration-300 translate-y-2 opacity-0`;
+
+
+    toast.innerHTML = `
+
+      <div class="text-base shrink-0 mt-0.5">
+        ${icon}
+      </div>
+
+      <div class="flex-1">
+
+        <h5 class="text-xs font-bold text-white">
+          ${title}
+        </h5>
+
+        <p class="text-xs text-slate-300 mt-0.5">
+          ${message}
+        </p>
+
+      </div>
+
+    `;
+
+
+    container.appendChild(
+      toast
+    );
+
+
+    requestAnimationFrame(() => {
+
+      toast.classList.remove(
+        'translate-y-2',
+        'opacity-0'
+      );
+
+    });
+
+
+    setTimeout(() => {
+
+      toast.classList.add(
+        'opacity-0',
+        'translate-y-2'
+      );
+
+      setTimeout(
+        () => toast.remove(),
+        300
+      );
+
+    }, 3500);
+
+  }
+
+};
+
+
+window.onload = function() {
+
+  app.init();
+
+};
+
+</script>
+
+</body>
+</html>
