@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitLife Gym - Registro y Estado de Máquinas</title>
+  <!-- Tipografía Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Hoja de Estilos -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- INDICADOR DE CARGA OVERLAY (Google Sheets API) -->
+  <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; color: #fff; flex-direction: column;">
+    <div class="spinner" style="border: 4px solid #333; border-top: 4px solid #f36100; border-radius: 50%; width: 45px; height: 45px; animation: spin 0.8s linear infinite; margin-bottom: 15px;"></div>
+    <p style="font-weight: 600; letter-spacing: 0.5px;">Sincronizando con Google Sheets...</p>
+  </div>
+
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="main-header">
+    <div class="header-wrapper">
+      <div class="logo-container">
+        <div class="logo-icon">🏋️</div>
+        <div class="logo-text">FITLIFE <span>GYM</span></div>
+      </div>
+      
+      <div class="user-nav" id="user-nav-bar">
+        <div class="points-badge" id="user-points-badge">
+          <span>🏆 Puntos:</span>
+          <span id="current-user-points">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="app-container">
+
+    <!-- BARRA DE NAVEGACIÓN POR PESTAÑAS -->
+    <nav class="nav-tabs">
+      <button class="nav-tab-btn active" data-view="catalog">
+        <span>🏋️</span> Máquinas y QR
+      </button>
+      <button class="nav-tab-btn" data-view="report">
+        <span>⚙️</span> Reportar Estado
+      </button>
+      <button class="nav-tab-btn" data-view="gamification">
+        <span>🎁</span> Logros y Canjes
+      </button>
+      <button class="nav-tab-btn" data-view="admin">
+        <span>🔧</span> Panel Mantenimiento
+      </button>
+      <button class="nav-tab-btn" data-view="auth">
+        <span>👤</span> Mi Cuenta / Registro
+      </button>
+    </nav>
+
+    <!-- VISTA 1: REGISTRO / LOGIN (AUTH) -->
+    <section id="view-auth" class="view-section">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h2>FITLIFE GYM</h2>
+          <p>Gestión y fidelización gamificada para socios</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-mode="register">Registrarse</button>
+          <button class="auth-tab" data-auth-mode="login">Iniciar Sesión</button>
+        </div>
+
+        <form id="auth-form">
+          <div class="form-group" id="group-name">
+            <label for="auth-name">Nombre Completo</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="auth-name" class="form-control" placeholder="Ej. Juan Pérez">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="auth-email">Correo Electrónico</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">✉️</span>
+              <input type="email" id="auth-email" class="form-control" placeholder="correo@ejemplo.com" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="auth-password">Contraseña</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="auth-password" class="form-control" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div class="form-group" id="group-member-id">
+            <label for="auth-member-id">Número de Socio (Opcional)</label>
+            <div class="input-icon-wrapper">
+              <span class="input-icon">🪪</span>
+              <input type="text" id="auth-member-id" class="form-control" placeholder="Ej. SOC-1024">
+            </div>
+          </div>
+
+          <div class="bonus-banner" id="bonus-banner">
+            <span>🎁</span>
+            <div>
+              <strong>¡Incentivo de Registro!</strong><br>
+              Crea tu cuenta hoy y gana <strong>+100 Puntos</strong> de bienvenida en tu perfil.
+            </div>
+          </div>
+
+          <button type="submit" id="btn-auth-submit" class="btn-primary" data-mode="register">
+            CREAR MI CUENTA (+100 PTS)
+          </button>
+        </form>
+
+        <div class="social-login">
+          <div class="social-divider"><span>Ó regístrate con</span></div>
+          <div class="social-buttons">
+            <button type="button" class="btn-social">Google</button>
+            <button type="button" class="btn-social">Facebook</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: CATÁLOGO DE MÁQUINAS Y BÚSQUEDA -->
+    <section id="view-catalog" class="view-section active">
+      <div class="catalog-controls">
+        <div class="search-box">
+          <input type="text" id="search-machine-input" class="form-control" placeholder="Buscar máquina o código ID (ej. MAQ-001)...">
+        </div>
+        
+        <div class="filter-pills">
+          <button class="pill-btn active" data-filter="todos">Todas</button>
+          <button class="pill-btn" data-filter="musculación">Musculación</button>
+          <button class="pill-btn" data-filter="cardio">Cardio</button>
+        </div>
+      </div>
+
+      <div class="machine-grid" id="catalog-machine-grid">
+        <!-- Inyección dinámica desde app.js / Google Sheets -->
+      </div>
+    </section>
+
+    <!-- VISTA 3: FORMULARIO DE REPORTE Y GAMIFICACIÓN -->
+    <section id="view-report" class="view-section">
+      <div class="report-container">
+        <div class="machine-summary-header">
+          <img src="" id="report-machine-img" class="summary-img" alt="Máquina">
+          <div>
+            <h3 id="report-machine-name">Selecciona una máquina</h3>
+            <span id="report-machine-id" class="machine-code">ID: --</span>
+            <p id="report-machine-loc" class="machine-location">📍 --</p>
+          </div>
+        </div>
+
+        <form id="report-form">
+          <label style="display: block; margin-bottom: 12px; font-weight: 700;">¿Cómo encontraste esta máquina hoy?</label>
+          
+          <div class="state-selector-grid">
+            <div class="state-option selected-good" id="opt-status-good">
+              <div style="font-size: 1.8rem; margin-bottom: 5px;">✓</div>
+              <strong>Funciona bien</strong>
+            </div>
+            <div class="state-option" id="opt-status-bad">
+              <div style="font-size: 1.8rem; margin-bottom: 5px;">⚠️</div>
+              <strong>Requiere Mantenimiento</strong>
+            </div>
+          </div>
+
+          <div id="failure-details-section" style="display: none;">
+            <div class="form-group">
+              <label for="report-failure-type">Tipo de Falla Detectada:</label>
+              <select id="report-failure-type" class="form-control">
+                <option value="Cable desgastado / Tensión débil">Cable desgastado / Tensión débil</option>
+                <option value="Ruido extraño / Falta lubricación">Ruido extraño / Falta lubricación</option>
+                <option value="Pantalla / Sensor desconfigurado">Pantalla / Sensor desconfigurado</option>
+                <option value="Tapizado o estructura dañada">Tapizado o estructura dañada</option>
+                <option value="Otro problema">Otro problema técnico</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="report-description">Descripción del problema:</label>
+              <textarea id="report-description" class="form-control" rows="3" placeholder="Describe brevemente qué falla notaste..."></textarea>
+            </div>
+
+            <div class="photo-upload-zone">
+              <span>📷 Adjuntar foto del problema (opcional)</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top: 15px;">
+            ENVIAR REPORTE (+50 PTS)
+          </button>
+        </form>
+
+        <!-- Tarjeta de Progreso de Gamificación -->
+        <div class="gamification-progress-card">
+          <div class="progress-header">
+            <strong id="report-progress-badge">Medalla Activa: Detector de Fallas</strong>
+            <span style="color: var(--primary-color); font-weight: 700;">+50 Pts al enviar</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 75%;"></div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Completa reportes para desbloquear descuentos en tu cuota mensual.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 4: PANEL DE LOGROS Y TIENDA DE RECOMPENSAS -->
+    <section id="view-gamification" class="view-section">
+      <div class="gamification-dashboard">
+        <div class="user-profile-card">
+          <div class="profile-avatar">👤</div>
+          <h3 id="user-profile-name">Cargando socio...</h3>
+          <p id="user-profile-badge" style="color: var(--primary-color); font-weight: 600; margin-bottom: 10px;">Guardián Principiante</p>
+          <div style="background-color: #121212; padding: 12px; border-radius: 8px; margin-top: 15px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Saldo de Puntos</span>
+            <h2 id="user-profile-pts" style="color: #28a745; margin-top: 5px;">0 Pts</h2>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom: 15px;">🛍️ Tienda de Canje de Recompensas</h3>
+          <div class="rewards-grid" id="rewards-grid">
+            <!-- Inyección dinámica desde app.js / Google Sheets -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 5: PANEL DE TÉCNICO / MANTENIMIENTO (ADMIN) -->
+    <section id="view-admin" class="view-section">
+      <div style="background-color: var(--card-bg); padding: 25px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+        <h3 style="margin-bottom: 15px;">🔧 Registro Técnico y Mantenimiento de Máquinas</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Listado de máquinas reportadas por socios en tiempo real desde Google Sheets.
+        </p>
+        <div id="admin-reports-list">
+          <!-- Inyección dinámica de reportes -->
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="main-footer">
+    <p>© 2026 FitLife Gym Management System. Todos los derechos reservados.</p>
+  </footer>
+
+  <!-- NOTIFICACIONES TOAST -->
+  <div id="toast-notification" class="toast-notification"></div>
+
+  <!-- ESTILOS EXTRA PARA ANIMACIÓN SPINNER -->
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- LÓGICA PRINCIPAL JAVASCRIPT -->
+  <script src="app.js" defer></script>
+</body>
+</html>
