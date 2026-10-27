@@ -518,7 +518,7 @@
        ======================================================================== */
     
 // URL DE GOOGLE APPS SCRIPT (Reemplaza con tu enlace desplegado)
-const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxsp_-1s-_i8YGL1hxpKPLRr_b3VmDh2ePYAdwxvcFRS8Jaqlfd-CUuAV_BI5lFexyVHw/exec";
+const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-zRsCsDVg6PTiRqgGNLuuAfd0Y_yKduROx0owjijt05QBDkofY7eZP5LSMVsfb9yOgA/exec";
 
 const SimulatedServerAPI = {
       KEYS: {
@@ -830,22 +830,65 @@ const SimulatedServerAPI = {
         }
       },
 
-      handleLogin(e) {
+      async handleLogin(e) {
         e.preventDefault();
-        const email = document.getElementById('login-email').value;
-        this.state.user = {
-          name: email.split('@')[0] || 'Socio Gym',
-          email: email,
-          memberId: 'FIT-2026',
-          role: 'Miembro',
-          puntosTotales: 350,
-          level: 2,
-          levelName: 'Detector Experto'
-        };
-        SimulatedServerAPI.saveUser(this.state.user);
-        this.updateUserHeaderUI();
-        this.showToast('¡Sesión Iniciada!', 'Bienvenido nuevamente a FitLife Gym', 'success');
-        this.navigateTo('catalog');
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        // Si la URL de Apps Script está configurada, autenticar contra Google Sheets
+        if (typeof GOOGLE_SHEETS_API_URL !== 'undefined' && !GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
+          try {
+            SimulatedServerAPI.showLoader(true);
+            const response = await fetch(GOOGLE_SHEETS_API_URL, {
+              method: 'POST',
+              body: JSON.stringify({
+                action: 'loginUser',
+                email: email,
+                password: password
+              })
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.user) {
+              this.state.user = {
+                name: result.user.name,
+                email: result.user.email,
+                memberId: result.user.memberId,
+                role: 'Miembro',
+                puntosTotales: result.user.points || 100,
+                level: result.user.level || 1,
+                levelName: 'Socio Activo'
+              };
+              SimulatedServerAPI.saveUser(this.state.user);
+              this.updateUserHeaderUI();
+              this.showToast('¡Sesión Iniciada!', `Bienvenido nuevamente, ${this.state.user.name}`, 'success');
+              this.navigateTo('catalog');
+            } else {
+              this.showToast('Error de Autenticación', result.message || 'Correo o contraseña incorrectos', 'error');
+            }
+          } catch (err) {
+            console.error("Error al iniciar sesión con Google Sheets:", err);
+            this.showToast('Error de Conexión', 'No se pudo conectar con la base de datos', 'error');
+          } finally {
+            SimulatedServerAPI.showLoader(false);
+          }
+        } else {
+          // Modo local/demo fallback
+          this.state.user = {
+            name: email.split('@')[0] || 'Socio Gym',
+            email: email,
+            memberId: 'FIT-2026',
+            role: 'Miembro',
+            puntosTotales: 350,
+            level: 2,
+            levelName: 'Detector Experto'
+          };
+          SimulatedServerAPI.saveUser(this.state.user);
+          this.updateUserHeaderUI();
+          this.showToast('¡Sesión Iniciada (Demo)!', 'Bienvenido nuevamente a FitLife Gym', 'success');
+          this.navigateTo('catalog');
+        }
       },
 
       async handleRegister(e) {
