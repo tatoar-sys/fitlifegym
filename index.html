@@ -518,7 +518,7 @@
        ======================================================================== */
     
 // URL DE GOOGLE APPS SCRIPT (Reemplaza con tu enlace desplegado)
-const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwBEvTV90JIeK4nRB_KunTNb7hTIVXHFJsktZpH3sQL7ZzWybmtJUMx9-2lLfR0EcSRAg/exec";
+const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxsp_-1s-_i8YGL1hxpKPLRr_b3VmDh2ePYAdwxvcFRS8Jaqlfd-CUuAV_BI5lFexyVHw/exec";
 
 const SimulatedServerAPI = {
       KEYS: {
@@ -848,13 +848,13 @@ const SimulatedServerAPI = {
         this.navigateTo('catalog');
       },
 
-      handleRegister(e) {
+      async handleRegister(e) {
         e.preventDefault();
         const name = document.getElementById('reg-name').value;
         const email = document.getElementById('reg-email').value;
-        const memberId = document.getElementById('reg-memberid').value || 'FIT-NEW';
+        const password = document.getElementById('reg-password').value;
+        const memberId = document.getElementById('reg-memberid').value || 'FIT-' + Math.floor(1000 + Math.random() * 9000);
 
-        // Award +100 Points for Registration
         this.state.user = {
           name: name,
           email: email,
@@ -864,8 +864,31 @@ const SimulatedServerAPI = {
           level: 1,
           levelName: 'Novato Registrado'
         };
+
         SimulatedServerAPI.saveUser(this.state.user);
         this.updateUserHeaderUI();
+
+        // Envío e integración con Google Sheets API
+        if (typeof GOOGLE_SHEETS_API_URL !== 'undefined' && !GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
+          try {
+            SimulatedServerAPI.showLoader(true);
+            await fetch(GOOGLE_SHEETS_API_URL, {
+              method: 'POST',
+              body: JSON.stringify({
+                action: 'registerUser',
+                name: name,
+                email: email,
+                password: password,
+                memberId: memberId
+              })
+            });
+          } catch (err) {
+            console.error("Error al registrar en Google Sheets:", err);
+          } finally {
+            SimulatedServerAPI.showLoader(false);
+          }
+        }
+
         this.showToast('¡Cuenta Creada!', 'Ganaste +100 Pts de regalo de bienvenida 🎉', 'gold');
         this.navigateTo('catalog');
       },
