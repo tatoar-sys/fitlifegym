@@ -152,8 +152,8 @@
             <i class="fa-solid fa-gift"></i>
           </div>
           <div>
-            <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">¡Bono de bienvenida!</h4>
-            <p class="text-xs text-slate-200 mt-0.5">Regístrate hoy y recibe <strong class="text-amber-300 font-bold">+100 Pts</strong> de gamificación de regalo.</p>
+            <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">¡Suma Puntos Saludables!</h4>
+            <p class="text-xs text-slate-200 mt-0.5">Regístrate hoy y recibe <strong class="text-amber-300 font-bold">Puntos Saludables</strong> cada vez que reportes el estado de una máquina.</p>
           </div>
         </div>
 
@@ -212,7 +212,7 @@
             </div>
           </div>
           <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-brand-500 hover:from-amber-600 hover:to-brand-600 text-white font-extrabold rounded-xl text-sm shadow-lg shadow-brand-500/25 transition-all transform active:scale-98">
-            <i class="fa-solid fa-star mr-1.5"></i> Crear Cuenta (+100 Pts)
+            <i class="fa-solid fa-star mr-1.5"></i> Crear Cuenta
           </button>
         </form>
 
@@ -372,7 +372,7 @@
                 <h2 id="gami-user-name" class="text-xl font-bold text-white">Juan Pérez</h2>
                 <span id="gami-user-level-badge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30">Nivel 2: Detector Experto</span>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Colabora con el mantenimiento del gym para subir de categoría.</p>
+              <p class="text-xs text-slate-400 mt-1">Reporta el estado de las máquinas para sumar Puntos Saludables.</p>
             </div>
           </div>
 
@@ -382,7 +382,7 @@
               <i class="fa-solid fa-coins"></i>
             </div>
             <div>
-              <span class="text-xs text-slate-400 font-semibold block">Puntos Acumulados</span>
+              <span class="text-xs text-slate-400 font-semibold block">Puntos Saludables</span>
               <span id="gami-total-points" class="text-2xl font-black text-amber-400 tracking-tight">350 Pts</span>
             </div>
           </div>
@@ -518,7 +518,7 @@
        ======================================================================== */
     
 // URL DE GOOGLE APPS SCRIPT (Reemplaza con tu enlace desplegado)
-const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbw-zRsCsDVg6PTiRqgGNLuuAfd0Y_yKduROx0owjijt05QBDkofY7eZP5LSMVsfb9yOgA/exec";
+const GOOGLE_SHEETS_API_URL = "TU_URL_DE_APPS_SCRIPT_AQUI";
 
 const SimulatedServerAPI = {
       KEYS: {
@@ -903,7 +903,7 @@ const SimulatedServerAPI = {
           email: email,
           memberId: memberId,
           role: 'Miembro',
-          puntosTotales: 100, // Welcome Bonus
+          puntosTotales: 0, // Puntos se otorgan solo al reportar
           level: 1,
           levelName: 'Novato Registrado'
         };
@@ -932,7 +932,7 @@ const SimulatedServerAPI = {
           }
         }
 
-        this.showToast('¡Cuenta Creada!', 'Ganaste +100 Pts de regalo de bienvenida 🎉', 'gold');
+        this.showToast('¡Cuenta Creada!', '¡Bienvenido a FitLife! Reporta máquinas para sumar Puntos Saludables 🎉', 'gold');
         this.navigateTo('catalog');
       },
 
@@ -1104,7 +1104,7 @@ const SimulatedServerAPI = {
         this.updateUserHeaderUI();
 
         // Show Gamification Toast
-        this.showToast('¡Reporte Enviado!', 'Ganaste +50 Pts de gamificación 🏆', 'gold');
+        this.showToast('¡Reporte Enviado!', 'Ganaste +50 Puntos Saludables 🏆', 'gold');
 
         // Navigate back to catalog
         this.navigateTo('catalog');
