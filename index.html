@@ -146,16 +146,7 @@
           </button>
         </div>
 
-        <!-- Gamification Welcome Banner -->
-        <div id="gamification-welcome-banner" class="mb-6 p-3.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-brand-500/20 border border-amber-500/40 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 text-lg font-bold">
-            <i class="fa-solid fa-gift"></i>
-          </div>
-          <div>
-            <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">¡Bono de bienvenida!</h4>
-            <p class="text-xs text-slate-200 mt-0.5">Regístrate hoy y recibe <strong class="text-amber-300 font-bold">+100 Pts</strong> de gamificación de regalo.</p>
-          </div>
-        </div>
+
 
         <!-- Login Form -->
         <form id="form-login" onsubmit="app.handleLogin(event)" class="space-y-4">
@@ -216,9 +207,7 @@
           </button>
         </form>
 
-        <div class="mt-6 pt-4 border-t border-slate-800/80 text-center text-xs text-slate-500">
-          Demo de prueba rápida: Inicia sesión directamente con las credenciales por defecto.
-        </div>
+
       </div>
     </section>
 
@@ -616,18 +605,7 @@ const SimulatedServerAPI = {
       getUser() {
         const saved = localStorage.getItem(this.KEYS.USER);
         if (saved) return JSON.parse(saved);
-
-        const defaultUser = {
-          name: 'Juan Pérez',
-          email: 'socio@fitlife.com',
-          memberId: 'FIT-1042',
-          role: 'Miembro',
-          puntosTotales: 350,
-          level: 2,
-          levelName: 'Detector Experto'
-        };
-        localStorage.setItem(this.KEYS.USER, JSON.stringify(defaultUser));
-        return defaultUser;
+        return null;
       },
 
       saveUser(user) {
@@ -874,20 +852,7 @@ const SimulatedServerAPI = {
             SimulatedServerAPI.showLoader(false);
           }
         } else {
-          // Modo local/demo fallback
-          this.state.user = {
-            name: email.split('@')[0] || 'Socio Gym',
-            email: email,
-            memberId: 'FIT-2026',
-            role: 'Miembro',
-            puntosTotales: 350,
-            level: 2,
-            levelName: 'Detector Experto'
-          };
-          SimulatedServerAPI.saveUser(this.state.user);
-          this.updateUserHeaderUI();
-          this.showToast('¡Sesión Iniciada (Demo)!', 'Bienvenido nuevamente a FitLife Gym', 'success');
-          this.navigateTo('catalog');
+          this.showToast('Error de Configuración', 'Debes configurar GOOGLE_SHEETS_API_URL para verificar las credenciales con Google Sheets.', 'error');
         }
       },
 
