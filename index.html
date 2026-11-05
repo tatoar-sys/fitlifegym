@@ -152,8 +152,8 @@
             <i class="fa-solid fa-gift"></i>
           </div>
           <div>
-            <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">¡Suma Puntos Saludables!</h4>
-            <p class="text-xs text-slate-200 mt-0.5">Regístrate hoy y recibe <strong class="text-amber-300 font-bold">Puntos Saludables</strong> cada vez que reportes el estado de una máquina.</p>
+            <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">¡Bono de bienvenida!</h4>
+            <p class="text-xs text-slate-200 mt-0.5">Regístrate hoy y recibe <strong class="text-amber-300 font-bold">+100 Pts</strong> de gamificación de regalo.</p>
           </div>
         </div>
 
@@ -616,18 +616,7 @@ const SimulatedServerAPI = {
       getUser() {
         const saved = localStorage.getItem(this.KEYS.USER);
         if (saved) return JSON.parse(saved);
-
-        const defaultUser = {
-          name: 'Juan Pérez',
-          email: 'socio@fitlife.com',
-          memberId: 'FIT-1042',
-          role: 'Miembro',
-          puntosTotales: 350,
-          level: 2,
-          levelName: 'Detector Experto'
-        };
-        localStorage.setItem(this.KEYS.USER, JSON.stringify(defaultUser));
-        return defaultUser;
+        return null;
       },
 
       saveUser(user) {
@@ -754,6 +743,12 @@ const SimulatedServerAPI = {
 
       /* VIEW NAVIGATION ROUTER */
       navigateTo(viewId) {
+        // Restricción: solo usuarios registrados/autenticados pueden acceder a las vistas del sistema
+        if (!this.state.user && viewId !== 'login') {
+          this.showToast('Acceso Restringido', 'Debes iniciar sesión o registrarte para continuar.', 'error');
+          viewId = 'login';
+        }
+
         // Hide all views
         const views = ['view-login', 'view-catalog', 'view-report', 'view-gamification', 'view-maintenance'];
         views.forEach(v => {
@@ -1236,6 +1231,11 @@ const SimulatedServerAPI = {
 
       /* QR MODAL SIMULATOR */
       openQRModal() {
+        if (!this.state.user) {
+          this.showToast('Acceso Restringido', 'Inicia sesión para escanear códigos QR.', 'error');
+          this.navigateTo('login');
+          return;
+        }
         const modal = document.getElementById('modal-qr');
         modal.classList.remove('hidden');
 
