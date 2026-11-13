@@ -450,7 +450,7 @@
        ======================================================================== */
     
 // URL DE GOOGLE APPS SCRIPT (Reemplaza con tu enlace desplegado)
-const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbyzkX-0oMY07j3nirIQ3LJgc0zt8QzC70tr5BCVRN1XokbKF13Xlcl0ND_tq79vAihevA/exec";
+const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbyh4gURUgqnG6ki8fgh1n-NmjbeC09npX2a_Y9l7aJcZcXSBFd5alvhjfKuGcl7PwDrSg/exec";
 
 const HEALTHY_BADGES = [
   { id: 'b1', name: 'Primer Impulso Saludable', desc: '500 Pts: ¡Comenzaste a activar tu metabolismo y energía diaria!', points: 500, icon: 'fa-seedling' },
@@ -492,6 +492,7 @@ const SimulatedServerAPI = {
           if (!data.success) throw new Error(data.message || 'Google Sheets no pudo cargar los datos.');
           localStorage.setItem(this.KEYS.MACHINES, JSON.stringify(Array.isArray(data.machines) ? data.machines : []));
           localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(Array.isArray(data.reports) ? data.reports : []));
+          return data;
         } catch (e) {
           console.error("Error al cargar datos desde Google Sheets:", e);
           localStorage.setItem(this.KEYS.MACHINES, JSON.stringify([]));
@@ -756,14 +757,18 @@ const SimulatedServerAPI = {
                 levelName: 'Socio Activo'
               };
               this.updateUserHeaderUI();
-              this.showToast('¡Sesión Iniciada!', `Bienvenido nuevamente, ${this.state.user.name}`, 'success');
+              if (SimulatedServerAPI.getMachines().length === 0) {
+                this.showToast('Catálogo vacío', 'Verifica que la pestaña Maquinas tenga filas con las columnas ID, Nombre, Zona/Category, Estado/Status y Ubicación/Location.', 'error');
+              } else {
+                this.showToast('¡Sesión Iniciada!', `Bienvenido nuevamente, ${this.state.user.name}`, 'success');
+              }
               this.navigateTo('catalog');
             } else {
               this.showToast('Error de Autenticación', result.message || 'Correo o contraseña incorrectos', 'error');
             }
           } catch (err) {
             console.error("Error al iniciar sesión con Google Sheets:", err);
-            this.showToast('Error de Conexión', 'No se pudo conectar con la base de datos', 'error');
+            this.showToast('Error al cargar Google Sheets', 'Revisa que index.html use la URL /exec del nuevo despliegue de Code.gs y que el proyecto apunte a la hoja correcta.', 'error');
           } finally {
             SimulatedServerAPI.showLoader(false);
           }
