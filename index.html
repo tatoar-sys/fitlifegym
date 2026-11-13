@@ -84,7 +84,7 @@
           <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
             FITLIFE <span class="text-brand-500">GYM</span>
           </h1>
-          <p class="text-xs text-slate-400 font-medium hidden sm:block">Registro & Salud</p>
+          <p class="text-xs text-slate-400 font-medium hidden sm:block">Registro de Máquinas & Salud</p>
         </div>
       </div>
 
@@ -396,7 +396,7 @@
       <div class="glass-panel p-5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30 mb-1">
-            <i class="fa-solid fa-user-gear"></i> Panel Técnico de Mantenimiento
+            <i class="fa-solid fa-user-gear"></i> Panel Técnico y Administración de Máquinas
           </div>
           <h2 class="text-xl font-bold text-white">Gestión de Incidentes y Máquinas</h2>
           <p class="text-xs text-slate-400 mt-0.5">Revisa reportes enviados por miembros y actualiza el estado del equipamiento.</p>
@@ -432,7 +432,7 @@
       </button>
       <button onclick="app.navigateTo('maintenance')" id="nav-btn-maintenance" class="hidden flex flex-col items-center gap-1 py-1 text-slate-400 hover:text-white font-semibold transition-colors">
         <i class="fa-solid fa-wrench text-lg"></i>
-        <span class="text-[10px]">Técnico</span>
+        <span class="text-[10px]">Máquinas</span>
       </button>
     </div>
   </nav>
@@ -631,7 +631,7 @@ const SimulatedServerAPI = {
 
       canAccessMaintenance() {
         const role = this.state.user?.role;
-        return typeof role === 'string' && ['técnico', 'tecnico'].includes(role.trim().toLocaleLowerCase('es'));
+        return typeof role === 'string' && ['técnico', 'tecnico', 'administrador'].includes(role.trim().toLocaleLowerCase('es'));
       },
 
       /* VIEW NAVIGATION ROUTER */
