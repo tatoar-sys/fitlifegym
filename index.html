@@ -84,7 +84,7 @@
           <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-2">
             FITLIFE <span class="text-brand-500">GYM</span>
           </h1>
-          <p class="text-xs text-slate-400 font-medium hidden sm:block">Registro & Gamificación</p>
+          <p class="text-xs text-slate-400 font-medium hidden sm:block">Registro & Salud</p>
         </div>
       </div>
 
@@ -95,22 +95,14 @@
           <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold">
             <i class="fa-solid fa-trophy"></i>
           </div>
-          <span id="header-user-points" class="font-bold text-amber-400 text-sm">350</span>
+          <span id="header-user-points" class="font-bold text-amber-400 text-sm">0</span>
           <span class="text-xs text-slate-400 font-medium">Pts</span>
-        </div>
-
-        <!-- Role Badge Switcher / Selector -->
-        <div class="relative">
-          <button id="role-toggle-btn" onclick="app.toggleRole()" title="Cambiar Rol (Demo)" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 flex items-center gap-1.5">
-            <span id="role-badge-text" class="text-brand-400">Miembro</span>
-            <i class="fa-solid fa-arrows-rotate text-slate-400 text-[10px]"></i>
-          </button>
         </div>
 
         <!-- User Avatar / Logout -->
         <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
           <div class="w-8 h-8 rounded-full bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs ring-2 ring-brand-500/50">
-            <span id="header-user-initials">JP</span>
+            <span id="header-user-initials">FL</span>
           </div>
           <button onclick="app.logout()" title="Cerrar Sesión" class="text-slate-400 hover:text-red-400 text-sm p-1.5 transition-colors">
             <i class="fa-solid fa-right-from-bracket"></i>
@@ -133,7 +125,7 @@
             <i class="fa-solid fa-id-card-clip text-3xl"></i>
           </div>
           <h2 class="text-2xl font-bold text-white">¡Bienvenido a FitLife!</h2>
-          <p class="text-sm text-slate-400 mt-1">Registra fallas en máquinas, acumula puntos y gana recompensas.</p>
+          <p class="text-sm text-slate-400 mt-1">Inicia sesión con tu cuenta registrada en Google Sheets.</p>
         </div>
 
         <!-- Auth Tabs Toggle -->
@@ -327,7 +319,7 @@
               <i class="fa-solid fa-award"></i>
             </div>
             <div>
-              <p class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">Premio de Gamificación</p>
+              <p class="text-xs font-extrabold text-amber-400 uppercase tracking-wider">Puntos Saludables</p>
               <p class="text-xs text-slate-300 mt-0.5">¡Ganarás <strong class="text-brand-400 font-bold">+50 Pts</strong> al enviar tu reporte!</p>
             </div>
           </div>
@@ -342,7 +334,7 @@
       </div>
     </section>
 
-    <!-- ==================== VISTA 4: GAMIFICACIÓN Y RECOMPENSAS ==================== -->
+    <!-- ==================== VISTA 4: INSIGNIAS SALUDABLES ==================== -->
     <section id="view-gamification" class="hidden space-y-6">
       <!-- User Gamification Overview Header Card -->
       <div class="glass-panel p-6 rounded-2xl border border-slate-800 relative overflow-hidden">
@@ -355,8 +347,8 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 id="gami-user-name" class="text-xl font-bold text-white">Juan Pérez</h2>
-                <span id="gami-user-level-badge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30">Nivel 2: Detector Experto</span>
+                <h2 id="gami-user-name" class="text-xl font-bold text-white"></h2>
+                  <span id="gami-user-level-badge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30">Nivel 1</span>
               </div>
               <p class="text-xs text-slate-400 mt-1">Reporta el estado de las máquinas para sumar Puntos Saludables.</p>
             </div>
@@ -369,7 +361,7 @@
             </div>
             <div>
               <span class="text-xs text-slate-400 font-semibold block">Puntos Saludables</span>
-              <span id="gami-total-points" class="text-2xl font-black text-amber-400 tracking-tight">350 Pts</span>
+              <span id="gami-total-points" class="text-2xl font-black text-amber-400 tracking-tight">0 Pts</span>
             </div>
           </div>
         </div>
@@ -378,10 +370,10 @@
         <div class="mt-6 pt-5 border-t border-slate-800/80">
           <div class="flex justify-between items-center text-xs font-bold mb-2">
             <span class="text-slate-300">Progreso de Nivel</span>
-            <span id="gami-level-progress-text" class="text-brand-400">80% (350 / 500 Pts para Nivel 3)</span>
+            <span id="gami-level-progress-text" class="text-brand-400">0% (0 / 500 Pts)</span>
           </div>
           <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
-            <div id="gami-level-bar" class="h-full bg-gradient-to-r from-brand-500 to-amber-500 rounded-full transition-all duration-500" style="width: 70%"></div>
+            <div id="gami-level-bar" class="h-full bg-gradient-to-r from-brand-500 to-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
         </div>
       </div>
@@ -411,8 +403,8 @@
         </div>
         <!-- Stats summary pills -->
         <div class="flex items-center gap-2 text-xs font-bold">
-          <span id="tech-pending-count" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">2 Pendientes</span>
-          <span id="tech-total-machines" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700">8 Máquinas</span>
+          <span id="tech-pending-count" class="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">0 Pendientes</span>
+          <span id="tech-total-machines" class="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700">0 Máquinas</span>
         </div>
       </div>
 
@@ -438,7 +430,7 @@
         <i class="fa-solid fa-trophy text-lg"></i>
         <span class="text-[10px]">Logros</span>
       </button>
-      <button onclick="app.navigateTo('maintenance')" id="nav-btn-maintenance" class="flex flex-col items-center gap-1 py-1 text-slate-400 hover:text-white font-semibold transition-colors">
+      <button onclick="app.navigateTo('maintenance')" id="nav-btn-maintenance" class="hidden flex flex-col items-center gap-1 py-1 text-slate-400 hover:text-white font-semibold transition-colors">
         <i class="fa-solid fa-wrench text-lg"></i>
         <span class="text-[10px]">Técnico</span>
       </button>
@@ -460,13 +452,25 @@
 // URL DE GOOGLE APPS SCRIPT (Reemplaza con tu enlace desplegado)
 const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbx7sXYGkzouQZtJS_3nJylEK88-3SroN2WjOi9LdsqQoUgoJf3XEVaz4y-lZO23mGnR/exec";
 
+const HEALTHY_BADGES = [
+  { id: 'b1', name: 'Primer Impulso Saludable', desc: '500 Pts: ¡Comenzaste a activar tu metabolismo y energía diaria!', points: 500, icon: 'fa-seedling' },
+  { id: 'b2', name: 'Corazón en Movimiento', desc: '1.000 Pts: Fortaleces tu sistema cardiovascular con constancia', points: 1000, icon: 'fa-heart-pulse' },
+  { id: 'b3', name: 'Hábito Saludable Consolidado', desc: '1.500 Pts: La actividad física ya es parte de tu rutina de bienestar', points: 1500, icon: 'fa-person-walking' },
+  { id: 'b4', name: 'Resistencia y Vitalidad', desc: '2.000 Pts: Mayor capacidad pulmonar y resistencia en cada sesión', points: 2000, icon: 'fa-lungs' },
+  { id: 'b5', name: 'Equilibrio Cuerpo y Mente', desc: '2.500 Pts: Reduces el estrés y mejoras tu descanso gracias al ejercicio', points: 2500, icon: 'fa-spa' },
+  { id: 'b6', name: 'Fuerza y Salud Ósea', desc: '3.000 Pts: Músculos más fuertes y articulaciones protegidas', points: 3000, icon: 'fa-dumbbell' },
+  { id: 'b7', name: 'Energía Imparable', desc: '3.500 Pts: Tu rendimiento físico y vitalidad alcanzan un gran nivel', points: 3500, icon: 'fa-bolt' },
+  { id: 'b8', name: 'Referente de Vida Activa', desc: '4.000 Pts: Inspiras salud, disciplina y bienestar integral', points: 4000, icon: 'fa-fire-flame-curved' },
+  { id: 'b9', name: 'Plenitud y Salud Total', desc: '4.500 Pts: Máximo compromiso con tu salud física y longevidad', points: 4500, icon: 'fa-crown' }
+];
+
 const SimulatedServerAPI = {
       KEYS: {
-        USER: 'fitlife_user_session',
         MACHINES: 'fitlife_machines_db',
         REPORTS: 'fitlife_reports_db',
-        BADGES: 'fitlife_badges_db'
+        POINTS: 'fitlife_user_points'
       },
+      initialDataError: false,
 
       showLoader(show) {
         const loader = document.getElementById('loading-overlay');
@@ -481,78 +485,33 @@ const SimulatedServerAPI = {
       },
 
       async loadDataFromSheets() {
-        if (GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
-          this.seedLocalDefaults();
-          return;
-        }
-
         try {
+          if (!GOOGLE_SHEETS_API_URL || GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
+            throw new Error("GOOGLE_SHEETS_API_URL no está configurada.");
+          }
           this.showLoader(true);
           const res = await fetch(`${GOOGLE_SHEETS_API_URL}?action=getInitialData`);
+          if (!res.ok) throw new Error(`Google Sheets respondió con estado ${res.status}.`);
           const data = await res.json();
-          if (data.machines && data.machines.length > 0) {
-            localStorage.setItem(this.KEYS.MACHINES, JSON.stringify(data.machines));
-          } else {
-            this.seedLocalDefaults();
-          }
-          if (data.reports) {
-            localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(data.reports));
-          }
+          localStorage.setItem(this.KEYS.MACHINES, JSON.stringify(Array.isArray(data.machines) ? data.machines : []));
+          localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(Array.isArray(data.reports) ? data.reports : []));
         } catch (e) {
           console.error("Error al cargar datos desde Google Sheets:", e);
-          this.seedLocalDefaults();
+          this.initialDataError = true;
+          localStorage.setItem(this.KEYS.MACHINES, JSON.stringify([]));
+          localStorage.setItem(this.KEYS.REPORTS, JSON.stringify([]));
         } finally {
           this.showLoader(false);
         }
       },
 
-      seedLocalDefaults() {
-        if (!localStorage.getItem(this.KEYS.MACHINES)) {
-          const initialMachines = [
-            { id: 'MAQ-001', name: 'Prensa de Piernas 45°', category: 'Fuerza', zone: 'Musculación', status: 'OPERATIVA', location: 'Zona Musculación - Sector B', icon: 'fa-layer-group' },
-            { id: 'MAQ-002', name: 'Cinta de Correr Pro XT', category: 'Cardio', zone: 'Cardio', status: 'REQUIERE MANTENIMIENTO', location: 'Zona Cardio - Fila 1', icon: 'fa-person-running' },
-            { id: 'MAQ-003', name: 'Jalón al Pecho / Polea Alta', category: 'Fuerza', zone: 'Musculación', status: 'OPERATIVA', location: 'Zona Musculación - Sector A', icon: 'fa-dumbbell' },
-            { id: 'MAQ-004', name: 'Bicicleta Estática Spin X', category: 'Cardio', zone: 'Cardio', status: 'FUERA DE SERVICIO', location: 'Zona Spin - Sector C', icon: 'fa-person-biking' },
-            { id: 'MAQ-005', name: 'Elíptica Ergométrica', category: 'Cardio', zone: 'Cardio', status: 'OPERATIVA', location: 'Zona Cardio - Fila 2', icon: 'fa-heart-pulse' },
-            { id: 'MAQ-006', name: 'Rack de Sentadillas Power', category: 'Fuerza', zone: 'Musculación', status: 'OPERATIVA', location: 'Zona Libres - Sector A', icon: 'fa-weight-hanging' },
-            { id: 'MAQ-007', name: 'Remo de Cable Sentado', category: 'Fuerza', zone: 'Musculación', status: 'OPERATIVA', location: 'Zona Musculación - Sector C', icon: 'fa-dharmachakra' },
-            { id: 'MAQ-008', name: 'Caminadora Curva Manual', category: 'Funcional', zone: 'Funcional', status: 'OPERATIVA', location: 'Zona Cross/Funcional', icon: 'fa-bolt' }
-          ];
-          localStorage.setItem(this.KEYS.MACHINES, JSON.stringify(initialMachines));
-        }
-
-        if (!localStorage.getItem(this.KEYS.BADGES)) {
-          const initialBadges = [
-            { id: 'b1', name: 'Primer Impulso Saludable', desc: '500 Pts: ¡Comenzaste a activar tu metabolismo y energía diaria!', points: 500, icon: 'fa-seedling' },
-            { id: 'b2', name: 'Corazón en Movimiento', desc: '1.000 Pts: Fortaleces tu sistema cardiovascular con constancia', points: 1000, icon: 'fa-heart-pulse' },
-            { id: 'b3', name: 'Hábito Saludable Consolidado', desc: '1.500 Pts: La actividad física ya es parte de tu rutina de bienestar', points: 1500, icon: 'fa-person-walking' },
-            { id: 'b4', name: 'Resistencia y Vitalidad', desc: '2.000 Pts: Mayor capacidad pulmonar y resistencia en cada sesión', points: 2000, icon: 'fa-lungs' },
-            { id: 'b5', name: 'Equilibrio Cuerpo y Mente', desc: '2.500 Pts: Reduces el estrés y mejoras tu descanso gracias al ejercicio', points: 2500, icon: 'fa-spa' },
-            { id: 'b6', name: 'Fuerza y Salud Ósea', desc: '3.000 Pts: Músculos más fuertes y articulaciones protegidas', points: 3000, icon: 'fa-dumbbell' },
-            { id: 'b7', name: 'Energía Imparable', desc: '3.500 Pts: Tu rendimiento físico y vitalidad alcanzan un gran nivel', points: 3500, icon: 'fa-bolt' },
-            { id: 'b8', name: 'Referente de Vida Activa', desc: '4.000 Pts: Inspiras salud, disciplina y bienestar integral', points: 4000, icon: 'fa-fire-flame-curved' },
-            { id: 'b9', name: 'Plenitud y Salud Total', desc: '4.500 Pts: Máximo compromiso con tu salud física y longevidad', points: 4500, icon: 'fa-crown' }
-          ];
-          localStorage.setItem(this.KEYS.BADGES, JSON.stringify(initialBadges));
-        }
-
-        if (!localStorage.getItem(this.KEYS.REPORTS)) {
-          const initialReports = [
-            { id: 'rep-101', machineId: 'MAQ-002', user: 'Juan Pérez', date: 'Hace 2 horas', statusOption: 'FAULT', failureType: 'Ruido extraño / Falta lubricación', description: 'Chirria bastante al correr a más de 10 km/h', status: 'PENDIENTE' },
-            { id: 'rep-102', machineId: 'MAQ-004', user: 'María Gómez', date: 'Ayer', statusOption: 'FAULT', failureType: 'Pedal flojo', description: 'El pedal derecho no ajusta firme', status: 'PENDIENTE' }
-          ];
-          localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(initialReports));
-        }
+      getSavedPoints(email) {
+        const points = Number(localStorage.getItem(`${this.KEYS.POINTS}:${email.toLowerCase()}`) || 0);
+        return Number.isFinite(points) && points >= 0 ? points : 0;
       },
 
-      getUser() {
-        const saved = localStorage.getItem(this.KEYS.USER);
-        if (saved) return JSON.parse(saved);
-        return null;
-      },
-
-      saveUser(user) {
-        localStorage.setItem(this.KEYS.USER, JSON.stringify(user));
+      savePoints(email, points) {
+        localStorage.setItem(`${this.KEYS.POINTS}:${email.toLowerCase()}`, String(points));
       },
 
       getMachines() {
@@ -577,43 +536,49 @@ const SimulatedServerAPI = {
       },
 
       async addReport(reportData) {
-        const reports = this.getReports();
-        const newReport = {
-          id: 'rep-' + Date.now().toString().slice(-4),
-          date: 'Justo ahora',
-          status: 'PENDIENTE',
-          ...reportData
-        };
-        reports.unshift(newReport);
-        localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(reports));
-
-        if (reportData.statusOption === 'FAULT') {
-          await this.updateMachineStatus(reportData.machineId, 'REQUIERE MANTENIMIENTO');
+        if (!GOOGLE_SHEETS_API_URL || GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
+          throw new Error("GOOGLE_SHEETS_API_URL no está configurada.");
         }
 
-        if (!GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
-          try {
-            this.showLoader(true);
-            await fetch(GOOGLE_SHEETS_API_URL, {
-              method: 'POST',
-              body: JSON.stringify({
-                action: 'createReport',
-                machineId: reportData.machineId,
-                userName: reportData.user,
-                failureType: reportData.failureType,
-                description: reportData.description,
-                statusOption: reportData.statusOption,
-                requiresMaintenance: reportData.statusOption === 'FAULT'
-              })
-            });
-          } catch (err) {
-            console.error("Error al enviar reporte a Google Sheets:", err);
-          } finally {
-            this.showLoader(false);
+        this.showLoader(true);
+        try {
+          const response = await fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'createReport',
+              machineId: reportData.machineId,
+              userName: reportData.user,
+              failureType: reportData.failureType,
+              description: reportData.description,
+              statusOption: reportData.statusOption,
+              requiresMaintenance: reportData.statusOption === 'FAULT'
+            })
+          });
+          if (!response.ok) throw new Error(`Google Sheets respondió con estado ${response.status}.`);
+          const result = await response.json();
+          if (!result.success) throw new Error(result.message || "Google Sheets no aceptó el reporte.");
+
+          const reports = this.getReports();
+          const newReport = {
+            id: 'rep-' + Date.now().toString().slice(-4),
+            date: 'Justo ahora',
+            status: 'PENDIENTE',
+            ...reportData
+          };
+          reports.unshift(newReport);
+          localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(reports));
+
+          if (reportData.statusOption === 'FAULT') {
+            await this.updateMachineStatus(reportData.machineId, 'REQUIERE MANTENIMIENTO');
           }
-        }
 
-        return newReport;
+          return newReport;
+        } catch (err) {
+          console.error("Error al enviar reporte a Google Sheets:", err);
+          throw err;
+        } finally {
+          this.showLoader(false);
+        }
       },
 
       async resolveReport(reportId) {
@@ -644,7 +609,7 @@ const SimulatedServerAPI = {
       },
 
       getBadges() {
-        return JSON.parse(localStorage.getItem(this.KEYS.BADGES)) || [];
+        return HEALTHY_BADGES;
       }
     };
     const app = {
@@ -657,20 +622,25 @@ const SimulatedServerAPI = {
       },
 
       init() {
-        SimulatedServerAPI.init();
-        this.state.user = SimulatedServerAPI.getUser();
-
-        // Check login state
-        if (this.state.user) {
-          this.navigateTo('catalog');
-          this.updateUserHeaderUI();
-        } else {
-          this.navigateTo('login');
+        this.state.user = null;
+        this.navigateTo('login');
+        if (SimulatedServerAPI.initialDataError) {
+          this.showToast('Error de conexión', 'No se pudieron cargar los datos desde Google Sheets.', 'error');
         }
+      },
+
+      canAccessMaintenance() {
+        const role = this.state.user?.role;
+        return typeof role === 'string' && ['técnico', 'tecnico'].includes(role.trim().toLocaleLowerCase('es'));
       },
 
       /* VIEW NAVIGATION ROUTER */
       navigateTo(viewId) {
+        if (viewId === 'maintenance' && !this.canAccessMaintenance()) {
+          this.showToast('Acceso restringido', 'Solo el personal técnico puede acceder a mantenimiento.', 'error');
+          viewId = 'catalog';
+        }
+
         // Hide all views
         const views = ['view-login', 'view-catalog', 'view-report', 'view-gamification', 'view-maintenance'];
         views.forEach(v => {
@@ -715,6 +685,9 @@ const SimulatedServerAPI = {
               btn.className = 'flex flex-col items-center gap-1 py-1 text-brand-500 font-bold transition-colors';
             } else {
               btn.className = 'flex flex-col items-center gap-1 py-1 text-slate-400 hover:text-white font-semibold transition-colors';
+            }
+            if (nav === 'maintenance' && !this.canAccessMaintenance()) {
+              btn.classList.add('hidden');
             }
           }
         });
@@ -765,19 +738,24 @@ const SimulatedServerAPI = {
               })
             });
 
+            if (!response.ok) throw new Error(`Google Sheets respondió con estado ${response.status}.`);
             const result = await response.json();
 
             if (result.success && result.user) {
+              const points = Number(result.user.points ?? 0);
               this.state.user = {
                 name: result.user.name,
                 email: result.user.email,
                 memberId: result.user.memberId,
-                role: 'Miembro',
-                puntosTotales: result.user.points || 100,
+                role: result.user.role || 'Miembro',
+                puntosTotales: Math.max(
+                  Number.isFinite(points) && points >= 0 ? points : 0,
+                  SimulatedServerAPI.getSavedPoints(email)
+                ),
                 level: result.user.level || 1,
                 levelName: 'Socio Activo'
               };
-              SimulatedServerAPI.saveUser(this.state.user);
+              SimulatedServerAPI.savePoints(email, this.state.user.puntosTotales);
               this.updateUserHeaderUI();
               this.showToast('¡Sesión Iniciada!', `Bienvenido nuevamente, ${this.state.user.name}`, 'success');
               this.navigateTo('catalog');
@@ -802,70 +780,54 @@ const SimulatedServerAPI = {
         const password = document.getElementById('reg-password').value;
         const memberId = document.getElementById('reg-memberid').value || 'FIT-' + Math.floor(1000 + Math.random() * 9000);
 
-        this.state.user = {
-          name: name,
-          email: email,
-          memberId: memberId,
-          role: 'Miembro',
-          puntosTotales: 0, // Puntos se otorgan solo al reportar
-          level: 1,
-          levelName: 'Novato Registrado'
-        };
-
-        SimulatedServerAPI.saveUser(this.state.user);
-        this.updateUserHeaderUI();
-
-        // Envío e integración con Google Sheets API
-        if (typeof GOOGLE_SHEETS_API_URL !== 'undefined' && !GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
-          try {
-            SimulatedServerAPI.showLoader(true);
-            await fetch(GOOGLE_SHEETS_API_URL, {
-              method: 'POST',
-              body: JSON.stringify({
-                action: 'registerUser',
-                name: name,
-                email: email,
-                password: password,
-                memberId: memberId
-              })
-            });
-          } catch (err) {
-            console.error("Error al registrar en Google Sheets:", err);
-          } finally {
-            SimulatedServerAPI.showLoader(false);
-          }
+        if (!GOOGLE_SHEETS_API_URL || GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
+          this.showToast('Error de Configuración', 'Debes configurar GOOGLE_SHEETS_API_URL para registrar tu cuenta.', 'error');
+          return;
         }
 
-        this.showToast('¡Cuenta Creada!', '¡Bienvenido a FitLife! Reporta máquinas para sumar Puntos Saludables 🎉', 'gold');
-        this.navigateTo('catalog');
+        try {
+          SimulatedServerAPI.showLoader(true);
+          const response = await fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'registerUser',
+              name: name,
+              email: email,
+              password: password,
+              memberId: memberId,
+              points: 0
+            })
+          });
+          if (!response.ok) throw new Error(`Google Sheets respondió con estado ${response.status}.`);
+          const result = await response.json();
+          if (!result.success) {
+            this.showToast('Error de Registro', result.message || 'No se pudo crear la cuenta.', 'error');
+            return;
+          }
+          SimulatedServerAPI.savePoints(email, 0);
+          this.showToast('¡Cuenta Creada!', 'Inicia sesión para comenzar a reportar máquinas y sumar Puntos Saludables.', 'success');
+          document.getElementById('form-register').reset();
+          this.switchAuthTab('login');
+        } catch (err) {
+          console.error("Error al registrar en Google Sheets:", err);
+          this.showToast('Error de Conexión', 'No se pudo registrar la cuenta en Google Sheets.', 'error');
+        } finally {
+          SimulatedServerAPI.showLoader(false);
+        }
       },
 
       logout() {
-        localStorage.removeItem(SimulatedServerAPI.KEYS.USER);
         this.state.user = null;
         this.showToast('Sesión Cerrada', 'Hasta pronto', 'info');
         this.navigateTo('login');
       },
 
-      toggleRole() {
-        if (!this.state.user) return;
-        this.state.user.role = this.state.user.role === 'Miembro' ? 'Técnico' : 'Miembro';
-        SimulatedServerAPI.saveUser(this.state.user);
-        this.updateUserHeaderUI();
-        this.showToast('Rol Actualizado', `Modo cambiado a: ${this.state.user.role}`, 'info');
-        if (this.state.user.role === 'Técnico') {
-          this.navigateTo('maintenance');
-        } else {
-          this.navigateTo('catalog');
-        }
-      },
-
       updateUserHeaderUI() {
         if (!this.state.user) return;
         document.getElementById('header-user-points').innerText = this.state.user.puntosTotales;
-        document.getElementById('role-badge-text').innerText = this.state.user.role;
         const initials = this.state.user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
         document.getElementById('header-user-initials').innerText = initials || 'FL';
+        document.getElementById('nav-btn-maintenance').classList.toggle('hidden', !this.canAccessMaintenance());
       },
 
       /* CATALOG VIEW RENDERERS & FILTERS */
@@ -985,7 +947,7 @@ const SimulatedServerAPI = {
         this.showToast('Foto Adjuntada', 'Se ha cargado foto_falla_equipo.jpg', 'info');
       },
 
-      submitMachineReport() {
+      async submitMachineReport() {
         const isFault = document.querySelector('input[name="report-status"]:checked').value === 'FAULT';
         const failureType = isFault ? document.getElementById('report-failure-type').value : 'Verificación Operativa';
         const description = document.getElementById('report-description').value || 'Sin comentarios adicionales.';
@@ -999,19 +961,20 @@ const SimulatedServerAPI = {
           hasPhoto: this.state.photoAttached
         };
 
-        // Add to API
-        SimulatedServerAPI.addReport(reportData);
-
-        // Award Gamification Points (+50 Pts)
-        this.state.user.puntosTotales += 50;
-        SimulatedServerAPI.saveUser(this.state.user);
-        this.updateUserHeaderUI();
-
-        // Show Gamification Toast
-        this.showToast('¡Reporte Enviado!', 'Ganaste +50 Puntos Saludables 🏆', 'gold');
-
-        // Navigate back to catalog
-        this.navigateTo('catalog');
+        const submitButton = document.querySelector('#view-report button[onclick="app.submitMachineReport()"]');
+        if (submitButton) submitButton.disabled = true;
+        try {
+          await SimulatedServerAPI.addReport(reportData);
+          this.state.user.puntosTotales += 50;
+          SimulatedServerAPI.savePoints(this.state.user.email, this.state.user.puntosTotales);
+          this.updateUserHeaderUI();
+          this.showToast('¡Reporte Enviado!', 'Ganaste +50 Puntos Saludables 🏆', 'gold');
+          this.navigateTo('catalog');
+        } catch (err) {
+          this.showToast('Error al enviar reporte', 'No se pudo guardar el reporte en Google Sheets; no se sumaron puntos.', 'error');
+        } finally {
+          if (submitButton) submitButton.disabled = false;
+        }
       },
 
       /* GAMIFICATION VIEW RENDERER */
