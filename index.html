@@ -396,18 +396,7 @@
         </div>
       </div>
 
-      <!-- Rewards Store Catalog -->
-      <div class="space-y-4 pt-2">
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-store text-brand-500"></i> Tienda de Recompensas
-          </h3>
-          <span class="text-xs text-slate-400">Canjea tus puntos acumulados</span>
-        </div>
-        <div id="rewards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Dynamically populated rewards -->
-        </div>
-      </div>
+
     </section>
 
     <!-- ==================== VISTA 5: MANTENIMIENTO Y TÉCNICO ==================== -->
@@ -476,8 +465,7 @@ const SimulatedServerAPI = {
         USER: 'fitlife_user_session',
         MACHINES: 'fitlife_machines_db',
         REPORTS: 'fitlife_reports_db',
-        BADGES: 'fitlife_badges_db',
-        REWARDS: 'fitlife_rewards_db'
+        BADGES: 'fitlife_badges_db'
       },
 
       showLoader(show) {
@@ -535,24 +523,17 @@ const SimulatedServerAPI = {
 
         if (!localStorage.getItem(this.KEYS.BADGES)) {
           const initialBadges = [
-            { id: 'b1', name: 'Primer Paso', desc: 'Registra tu cuenta e ingresa a FitLife', points: 100, icon: 'fa-user-check', unlocked: true },
-            { id: 'b2', name: 'Detector de Fallas N1', desc: 'Envía tu primer reporte de máquina', points: 50, icon: 'fa-shield-halved', unlocked: true },
-            { id: 'b3', name: 'Guardián del Gym', desc: 'Envía 3 reportes válidos de equipamiento', points: 150, icon: 'fa-award', unlocked: false },
-            { id: 'b4', name: 'Socio Inspector', desc: 'Escanea o revisa 5 máquinas distintas', points: 100, icon: 'fa-magnifying-glass', unlocked: false },
-            { id: 'b5', name: 'Cero Errores', desc: 'Confirma 5 máquinas operativas en buen estado', points: 100, icon: 'fa-circle-check', unlocked: false }
+            { id: 'b1', name: 'Iniciado FitLife', desc: 'Alcanza los 500 Puntos Saludables reportando equipos', points: 500, icon: 'fa-seedling' },
+            { id: 'b2', name: 'Detector Activo', desc: 'Alcanza los 1.000 Puntos Saludables', points: 1000, icon: 'fa-shield-halved' },
+            { id: 'b3', name: 'Inspector de Sala', desc: 'Alcanza los 1.500 Puntos Saludables', points: 1500, icon: 'fa-magnifying-glass' },
+            { id: 'b4', name: 'Guardián del Gym', desc: 'Alcanza los 2.000 Puntos Saludables', points: 2000, icon: 'fa-award' },
+            { id: 'b5', name: 'Centinela de Máquinas', desc: 'Alcanza los 2.500 Puntos Saludables', points: 2500, icon: 'fa-eye' },
+            { id: 'b6', name: 'Especialista Técnico', desc: 'Alcanza los 3.000 Puntos Saludables', points: 3000, icon: 'fa-medal' },
+            { id: 'b7', name: 'Maestro del Equipamiento', desc: 'Alcanza los 3.500 Puntos Saludables', points: 3500, icon: 'fa-star' },
+            { id: 'b8', name: 'Élite FitLife', desc: 'Alcanza los 4.000 Puntos Saludables', points: 4000, icon: 'fa-trophy' },
+            { id: 'b9', name: 'Leyenda del Gimnasio', desc: 'Alcanza los 4.500 Puntos Saludables', points: 4500, icon: 'fa-crown' }
           ];
           localStorage.setItem(this.KEYS.BADGES, JSON.stringify(initialBadges));
-        }
-
-        if (!localStorage.getItem(this.KEYS.REWARDS)) {
-          const initialRewards = [
-            { id: 'r1', name: 'Batido Proteico Whey 500ml', pointsCost: 200, icon: 'fa-wine-bottle', category: 'Nutrición' },
-            { id: 'r2', name: 'Toalla Deportiva Microfibra', pointsCost: 350, icon: 'fa-mattress-pillow', category: 'Accesorios' },
-            { id: 'r3', name: 'Pase de Día para un Amigo', pointsCost: 300, icon: 'fa-ticket', category: 'Pases' },
-            { id: 'r4', name: '20% Descuento en Cuota Mensual', pointsCost: 600, icon: 'fa-percent', category: 'Suscripción' },
-            { id: 'r5', name: 'Sesión Personal Trainer (45 min)', pointsCost: 800, icon: 'fa-stopwatch', category: 'Entrenamiento' }
-          ];
-          localStorage.setItem(this.KEYS.REWARDS, JSON.stringify(initialRewards));
         }
 
         if (!localStorage.getItem(this.KEYS.REPORTS)) {
@@ -664,10 +645,6 @@ const SimulatedServerAPI = {
 
       getBadges() {
         return JSON.parse(localStorage.getItem(this.KEYS.BADGES)) || [];
-      },
-
-      getRewards() {
-        return JSON.parse(localStorage.getItem(this.KEYS.REWARDS)) || [];
       }
     };
     const app = {
@@ -1043,17 +1020,25 @@ const SimulatedServerAPI = {
         document.getElementById('gami-user-name').innerText = user.name;
         document.getElementById('gami-total-points').innerText = `${user.puntosTotales} Pts`;
 
-        // Progress calculation
-        const nextLevelGoal = 500;
+        // Render Badges (9 logros con saltos cada 500 puntos)
+        const badges = SimulatedServerAPI.getBadges();
+        const nextBadge = badges.find(b => user.puntosTotales < b.points) || badges[badges.length - 1];
+        const nextLevelGoal = nextBadge.points;
+        const currentLevelNum = Math.floor(user.puntosTotales / 500) + 1;
+        const unlockedCount = badges.filter(b => user.puntosTotales >= b.points).length;
+        const levelTitle = unlockedCount > 0 ? badges[unlockedCount - 1].name : 'Principiante';
+
+        document.getElementById('gami-user-level-badge').innerText = `Nivel ${currentLevelNum}: ${levelTitle}`;
+
         const progressPct = Math.min(100, Math.round((user.puntosTotales / nextLevelGoal) * 100));
-        document.getElementById('gami-level-progress-text').innerText = `${progressPct}% (${user.puntosTotales} / ${nextLevelGoal} Pts para Nivel 3)`;
+        document.getElementById('gami-level-progress-text').innerText = user.puntosTotales >= 4500
+          ? `100% (${user.puntosTotales} Pts - ¡Nivel Máximo Alcanzado!)`
+          : `${progressPct}% (${user.puntosTotales} / ${nextLevelGoal} Pts para "${nextBadge.name}")`;
         document.getElementById('gami-level-bar').style.width = `${progressPct}%`;
 
-        // Render Badges
-        const badges = SimulatedServerAPI.getBadges();
         const badgesContainer = document.getElementById('badges-grid');
         badgesContainer.innerHTML = badges.map(b => {
-          const isUnlocked = b.unlocked || user.puntosTotales >= 200;
+          const isUnlocked = user.puntosTotales >= b.points;
           return `
             <div class="glass-panel p-4 rounded-xl border ${isUnlocked ? 'border-amber-500/40 bg-slate-900/80' : 'border-slate-800 opacity-60'} flex items-start gap-3">
               <div class="w-10 h-10 rounded-xl ${isUnlocked ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-500'} flex items-center justify-center text-lg font-bold shrink-0">
@@ -1062,55 +1047,16 @@ const SimulatedServerAPI = {
               <div class="flex-1">
                 <div class="flex items-center justify-between">
                   <h4 class="text-xs font-bold ${isUnlocked ? 'text-white' : 'text-slate-400'}">${b.name}</h4>
-                  <span class="text-[10px] font-extrabold text-amber-400">+${b.points} Pts</span>
+                  <span class="text-[10px] font-extrabold text-amber-400">${b.points} Pts</span>
                 </div>
                 <p class="text-[11px] text-slate-400 mt-0.5">${b.desc}</p>
                 ${isUnlocked 
                   ? `<span class="inline-block mt-2 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded"><i class="fa-solid fa-check mr-1"></i>Desbloqueado</span>`
-                  : `<span class="inline-block mt-2 text-[10px] font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded"><i class="fa-solid fa-lock mr-1"></i>En Progreso</span>`}
+                  : `<span class="inline-block mt-2 text-[10px] font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded"><i class="fa-solid fa-lock mr-1"></i>Bloqueado (${b.points - user.puntosTotales} Pts restantes)</span>`}
               </div>
             </div>
           `;
         }).join('');
-
-        // Render Rewards Store
-        const rewards = SimulatedServerAPI.getRewards();
-        const rewardsContainer = document.getElementById('rewards-grid');
-        rewardsContainer.innerHTML = rewards.map(r => {
-          const canAfford = user.puntosTotales >= r.pointsCost;
-          return `
-            <div class="glass-panel p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-3">
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-lg shrink-0">
-                  <i class="fa-solid ${r.icon}"></i>
-                </div>
-                <div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${r.category}</span>
-                  <h4 class="text-xs font-bold text-white mt-0.5">${r.name}</h4>
-                </div>
-              </div>
-              <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                <span class="text-xs font-extrabold text-amber-400"><i class="fa-solid fa-coins mr-1"></i>${r.pointsCost} Pts</span>
-                <button onclick="app.redeemReward('${r.id}', ${r.pointsCost}, '${r.name}')" ${!canAfford ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${canAfford ? 'bg-brand-500 hover:bg-brand-600 text-white shadow-md' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
-                  ${canAfford ? 'Canjear' : 'Puntos Insuficientes'}
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-      },
-
-      redeemReward(rewardId, cost, name) {
-        if (this.state.user.puntosTotales < cost) {
-          this.showToast('Puntos Insuficientes', 'Sigue sumando reportes para canjear este premio', 'error');
-          return;
-        }
-
-        this.state.user.puntosTotales -= cost;
-        SimulatedServerAPI.saveUser(this.state.user);
-        this.updateUserHeaderUI();
-        this.renderGamification();
-        this.showToast('¡Premio Canjeado!', `Has canjeado "${name}". Presenta tu cupón en recepción.`, 'success');
       },
 
       /* MAINTENANCE DASHBOARD RENDERER */
