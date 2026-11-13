@@ -467,11 +467,8 @@ const HEALTHY_BADGES = [
 const SimulatedServerAPI = {
       KEYS: {
         MACHINES: 'fitlife_machines_db',
-        REPORTS: 'fitlife_reports_db',
-        POINTS: 'fitlife_user_points'
+        REPORTS: 'fitlife_reports_db'
       },
-      initialDataError: false,
-
       showLoader(show) {
         const loader = document.getElementById('loading-overlay');
         if (loader) {
@@ -480,38 +477,29 @@ const SimulatedServerAPI = {
         }
       },
 
-      async init() {
-        await this.loadDataFromSheets();
-      },
-
-      async loadDataFromSheets() {
+      async loadDataFromSheets(token) {
         try {
           if (!GOOGLE_SHEETS_API_URL || GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
             throw new Error("GOOGLE_SHEETS_API_URL no está configurada.");
           }
           this.showLoader(true);
-          const res = await fetch(`${GOOGLE_SHEETS_API_URL}?action=getInitialData`);
+          const res = await fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'getInitialData', token: token })
+          });
           if (!res.ok) throw new Error(`Google Sheets respondió con estado ${res.status}.`);
           const data = await res.json();
+          if (!data.success) throw new Error(data.message || 'Google Sheets no pudo cargar los datos.');
           localStorage.setItem(this.KEYS.MACHINES, JSON.stringify(Array.isArray(data.machines) ? data.machines : []));
           localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(Array.isArray(data.reports) ? data.reports : []));
         } catch (e) {
           console.error("Error al cargar datos desde Google Sheets:", e);
-          this.initialDataError = true;
           localStorage.setItem(this.KEYS.MACHINES, JSON.stringify([]));
           localStorage.setItem(this.KEYS.REPORTS, JSON.stringify([]));
+          throw e;
         } finally {
           this.showLoader(false);
         }
-      },
-
-      getSavedPoints(email) {
-        const points = Number(localStorage.getItem(`${this.KEYS.POINTS}:${email.toLowerCase()}`) || 0);
-        return Number.isFinite(points) && points >= 0 ? points : 0;
-      },
-
-      savePoints(email, points) {
-        localStorage.setItem(`${this.KEYS.POINTS}:${email.toLowerCase()}`, String(points));
       },
 
       getMachines() {
@@ -546,8 +534,9 @@ const SimulatedServerAPI = {
             method: 'POST',
             body: JSON.stringify({
               action: 'createReport',
+              token: reportData.token,
               machineId: reportData.machineId,
-              userName: reportData.user,
+              userEmail: reportData.userEmail,
               failureType: reportData.failureType,
               description: reportData.description,
               statusOption: reportData.statusOption,
@@ -557,13 +546,21 @@ const SimulatedServerAPI = {
           if (!response.ok) throw new Error(`Google Sheets respondió con estado ${response.status}.`);
           const result = await response.json();
           if (!result.success) throw new Error(result.message || "Google Sheets no aceptó el reporte.");
+          const points = Number(result.points);
+          if (!Number.isFinite(points) || points < 0) {
+            throw new Error('Google Sheets devolvió un puntaje inválido.');
+          }
 
           const reports = this.getReports();
           const newReport = {
             id: 'rep-' + Date.now().toString().slice(-4),
             date: 'Justo ahora',
             status: 'PENDIENTE',
-            ...reportData
+            machineId: reportData.machineId,
+            user: reportData.user,
+            statusOption: reportData.statusOption,
+            failureType: reportData.failureType,
+            description: reportData.description
           };
           reports.unshift(newReport);
           localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(reports));
@@ -572,6 +569,7 @@ const SimulatedServerAPI = {
             await this.updateMachineStatus(reportData.machineId, 'REQUIERE MANTENIMIENTO');
           }
 
+          newReport.points = points;
           return newReport;
         } catch (err) {
           console.error("Error al enviar reporte a Google Sheets:", err);
@@ -584,27 +582,30 @@ const SimulatedServerAPI = {
       async resolveReport(reportId) {
         const reports = this.getReports();
         const report = reports.find(r => r.id === reportId);
-        if (report) {
-          report.status = 'RESUELTO';
+        if (!report) throw new Error('No se encontró el reporte seleccionado.');
+        this.showLoader(true);
+        try {
+          const response = await fetch(GOOGLE_SHEETS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'markRepaired',
+              token: app.state.user?.token,
+              machineId: report.machineId
+            })
+          });
+          if (!response.ok) throw new Error(`Google Sheets respondió con estado ${response.status}.`);
+          const result = await response.json();
+          if (!result.success) throw new Error(result.message || 'No se pudo actualizar la máquina.');
+
+          reports.forEach(function (item) {
+            if (item.machineId === report.machineId && item.status === 'PENDIENTE') {
+              item.status = 'RESUELTO';
+            }
+          });
           localStorage.setItem(this.KEYS.REPORTS, JSON.stringify(reports));
           await this.updateMachineStatus(report.machineId, 'OPERATIVA');
-
-          if (!GOOGLE_SHEETS_API_URL.includes("TU_URL")) {
-            try {
-              this.showLoader(true);
-              await fetch(GOOGLE_SHEETS_API_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                  action: 'markRepaired',
-                  machineId: report.machineId
-                })
-              });
-            } catch (err) {
-              console.error("Error al actualizar máquina en Sheets:", err);
-            } finally {
-              this.showLoader(false);
-            }
-          }
+        } finally {
+          this.showLoader(false);
         }
       },
 
@@ -624,9 +625,6 @@ const SimulatedServerAPI = {
       init() {
         this.state.user = null;
         this.navigateTo('login');
-        if (SimulatedServerAPI.initialDataError) {
-          this.showToast('Error de conexión', 'No se pudieron cargar los datos desde Google Sheets.', 'error');
-        }
       },
 
       canAccessMaintenance() {
@@ -636,6 +634,9 @@ const SimulatedServerAPI = {
 
       /* VIEW NAVIGATION ROUTER */
       navigateTo(viewId) {
+        if (viewId !== 'login' && !this.state.user) {
+          viewId = 'login';
+        }
         if (viewId === 'maintenance' && !this.canAccessMaintenance()) {
           this.showToast('Acceso restringido', 'Solo el personal técnico puede acceder a mantenimiento.', 'error');
           viewId = 'catalog';
@@ -742,20 +743,18 @@ const SimulatedServerAPI = {
             const result = await response.json();
 
             if (result.success && result.user) {
+              await SimulatedServerAPI.loadDataFromSheets(result.token);
               const points = Number(result.user.points ?? 0);
               this.state.user = {
                 name: result.user.name,
                 email: result.user.email,
                 memberId: result.user.memberId,
+                token: result.token,
                 role: result.user.role || 'Miembro',
-                puntosTotales: Math.max(
-                  Number.isFinite(points) && points >= 0 ? points : 0,
-                  SimulatedServerAPI.getSavedPoints(email)
-                ),
+                puntosTotales: Number.isFinite(points) && points >= 0 ? points : 0,
                 level: result.user.level || 1,
                 levelName: 'Socio Activo'
               };
-              SimulatedServerAPI.savePoints(email, this.state.user.puntosTotales);
               this.updateUserHeaderUI();
               this.showToast('¡Sesión Iniciada!', `Bienvenido nuevamente, ${this.state.user.name}`, 'success');
               this.navigateTo('catalog');
@@ -804,7 +803,6 @@ const SimulatedServerAPI = {
             this.showToast('Error de Registro', result.message || 'No se pudo crear la cuenta.', 'error');
             return;
           }
-          SimulatedServerAPI.savePoints(email, 0);
           this.showToast('¡Cuenta Creada!', 'Inicia sesión para comenzar a reportar máquinas y sumar Puntos Saludables.', 'success');
           document.getElementById('form-register').reset();
           this.switchAuthTab('login');
@@ -955,6 +953,8 @@ const SimulatedServerAPI = {
         const reportData = {
           machineId: this.state.selectedMachineId,
           user: this.state.user.name,
+          userEmail: this.state.user.email,
+          token: this.state.user.token,
           statusOption: isFault ? 'FAULT' : 'GOOD',
           failureType: failureType,
           description: description,
@@ -964,9 +964,8 @@ const SimulatedServerAPI = {
         const submitButton = document.querySelector('#view-report button[onclick="app.submitMachineReport()"]');
         if (submitButton) submitButton.disabled = true;
         try {
-          await SimulatedServerAPI.addReport(reportData);
-          this.state.user.puntosTotales += 50;
-          SimulatedServerAPI.savePoints(this.state.user.email, this.state.user.puntosTotales);
+          const report = await SimulatedServerAPI.addReport(reportData);
+          this.state.user.puntosTotales = report.points;
           this.updateUserHeaderUI();
           this.showToast('¡Reporte Enviado!', 'Ganaste +50 Puntos Saludables 🏆', 'gold');
           this.navigateTo('catalog');
@@ -1064,10 +1063,15 @@ const SimulatedServerAPI = {
         }).join('');
       },
 
-      resolveMaintenanceReport(reportId) {
-        SimulatedServerAPI.resolveReport(reportId);
-        this.renderMaintenance();
-        this.showToast('Máquina Reparada', 'El estado del equipo ha vuelto a OPERATIVA', 'success');
+      async resolveMaintenanceReport(reportId) {
+        try {
+          await SimulatedServerAPI.resolveReport(reportId);
+          this.renderMaintenance();
+          this.showToast('Máquina Reparada', 'El estado del equipo ha vuelto a OPERATIVA', 'success');
+        } catch (err) {
+          console.error('Error al actualizar máquina en Google Sheets:', err);
+          this.showToast('Error al actualizar', err.message || 'No se pudo actualizar la máquina.', 'error');
+        }
       },
 
       /* TOAST NOTIFICATION UTILITY */
@@ -1115,7 +1119,6 @@ const SimulatedServerAPI = {
     };
 
     window.onload = async function() {
-      await SimulatedServerAPI.init();
       app.init();
     };
   </script>
