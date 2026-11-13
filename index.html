@@ -523,15 +523,15 @@ const SimulatedServerAPI = {
 
         if (!localStorage.getItem(this.KEYS.BADGES)) {
           const initialBadges = [
-            { id: 'b1', name: 'Iniciado FitLife', desc: 'Alcanza los 500 Puntos Saludables reportando equipos', points: 500, icon: 'fa-seedling' },
-            { id: 'b2', name: 'Detector Activo', desc: 'Alcanza los 1.000 Puntos Saludables', points: 1000, icon: 'fa-shield-halved' },
-            { id: 'b3', name: 'Inspector de Sala', desc: 'Alcanza los 1.500 Puntos Saludables', points: 1500, icon: 'fa-magnifying-glass' },
-            { id: 'b4', name: 'Guardián del Gym', desc: 'Alcanza los 2.000 Puntos Saludables', points: 2000, icon: 'fa-award' },
-            { id: 'b5', name: 'Centinela de Máquinas', desc: 'Alcanza los 2.500 Puntos Saludables', points: 2500, icon: 'fa-eye' },
-            { id: 'b6', name: 'Especialista Técnico', desc: 'Alcanza los 3.000 Puntos Saludables', points: 3000, icon: 'fa-medal' },
-            { id: 'b7', name: 'Maestro del Equipamiento', desc: 'Alcanza los 3.500 Puntos Saludables', points: 3500, icon: 'fa-star' },
-            { id: 'b8', name: 'Élite FitLife', desc: 'Alcanza los 4.000 Puntos Saludables', points: 4000, icon: 'fa-trophy' },
-            { id: 'b9', name: 'Leyenda del Gimnasio', desc: 'Alcanza los 4.500 Puntos Saludables', points: 4500, icon: 'fa-crown' }
+            { id: 'b1', name: 'Primer Impulso Saludable', desc: '500 Pts: ¡Comenzaste a activar tu metabolismo y energía diaria!', points: 500, icon: 'fa-seedling' },
+            { id: 'b2', name: 'Corazón en Movimiento', desc: '1.000 Pts: Fortaleces tu sistema cardiovascular con constancia', points: 1000, icon: 'fa-heart-pulse' },
+            { id: 'b3', name: 'Hábito Saludable Consolidado', desc: '1.500 Pts: La actividad física ya es parte de tu rutina de bienestar', points: 1500, icon: 'fa-person-walking' },
+            { id: 'b4', name: 'Resistencia y Vitalidad', desc: '2.000 Pts: Mayor capacidad pulmonar y resistencia en cada sesión', points: 2000, icon: 'fa-lungs' },
+            { id: 'b5', name: 'Equilibrio Cuerpo y Mente', desc: '2.500 Pts: Reduces el estrés y mejoras tu descanso gracias al ejercicio', points: 2500, icon: 'fa-spa' },
+            { id: 'b6', name: 'Fuerza y Salud Ósea', desc: '3.000 Pts: Músculos más fuertes y articulaciones protegidas', points: 3000, icon: 'fa-dumbbell' },
+            { id: 'b7', name: 'Energía Imparable', desc: '3.500 Pts: Tu rendimiento físico y vitalidad alcanzan un gran nivel', points: 3500, icon: 'fa-bolt' },
+            { id: 'b8', name: 'Referente de Vida Activa', desc: '4.000 Pts: Inspiras salud, disciplina y bienestar integral', points: 4000, icon: 'fa-fire-flame-curved' },
+            { id: 'b9', name: 'Plenitud y Salud Total', desc: '4.500 Pts: Máximo compromiso con tu salud física y longevidad', points: 4500, icon: 'fa-crown' }
           ];
           localStorage.setItem(this.KEYS.BADGES, JSON.stringify(initialBadges));
         }
